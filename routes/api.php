@@ -20,7 +20,7 @@ use App\Http\Controllers\Auth\LoginController;
 Route::post('/auth/login', [LoginController::class, 'login']);
 
 // auth
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth.api')->group(function () {
 
     // role
     Route::get('/roles', [RoleController::class, 'getRole']);
