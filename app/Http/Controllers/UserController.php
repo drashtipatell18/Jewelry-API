@@ -125,4 +125,41 @@ class UserController extends Controller
             'user' => $user
         ], 200);
     }
+
+    public function updateProfile(Request $request, $id)
+    {
+        $validateUser = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'phone' => 'required',
+            'address' => 'required',
+        ]);
+        if($validateUser->fails()){
+            return response()->json($validateUser->errors(), 401);
+        }
+        $user = User::find($id);
+        if (is_null($user)) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        $filename = $user->image;
+        $image = $request->file('image');
+        if($image){
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images'), $filename);
+        }
+        $user->update([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
+            'role_id' => $request->input('role_id'),
+            'image' => $filename,
+            'phone' => $request->input('phone'),
+            'address' => $request->input('address'),
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'User Profile Update successfully',
+            'user' => $user
+        ], 200);
+    }
 }
