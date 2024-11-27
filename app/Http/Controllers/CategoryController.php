@@ -92,4 +92,47 @@ class CategoryController extends Controller
         ], 200);
     }
 
+    public function updateStatusCategory($id, Request $request)
+    {
+        if ($request->user()->role_id !== 1) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        $category = Category::find($id);
+        if (!$category) {
+            return response()->json(['success' => false, 'message' => 'Category not found'], 404);
+        }
+
+        $category->update([
+            'status' => $request->input('status')
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Category status updated successfully',
+            'category' => $category
+        ], 200);
+
+    }
+
+    public function getAllActiveCategory(Request $request)
+    {
+        $categories = Category::where('status', 'active')->get();
+        return response()->json([
+            'success' => true,
+            'message' => 'Categories Active fetched successfully',
+            'categories' => $categories
+        ], 200);
+    }
+
+
+    public function getAllInactiveCategory(Request $request)
+    {
+        $categories = Category::where('status', 'inactive')->get();
+        return response()->json([
+            'success' => true,
+            'message' => 'Categories Inactive fetched successfully',
+            'categories' => $categories
+        ], 200);
+    }
+
 }

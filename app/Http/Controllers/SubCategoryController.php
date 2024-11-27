@@ -137,4 +137,49 @@ class SubCategoryController extends Controller
             ]
         ], 200);
     }
+
+    public function updateStatusSubCategory($id, Request $request)
+    {
+        if ($request->user()->role_id !== 1) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $subCategory = SubCategory::find($id);
+
+        if (!$subCategory) {
+            return response()->json(['success' => false, 'message' => 'SubCategory not found'], 404);
+        }
+
+        $subCategory->update([
+            'status' => $request->input('status')
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'SubCategory status updated successfully',
+            'subCategory' => $subCategory
+        ], 200);
+    }
+
+    public function getAllActiveSubCategory(Request $request)
+    {
+        $subCategories = SubCategory::where('status', 'active')->get();
+        return response()->json([
+            'success' => true,
+            'message' => 'SubCategories Active fetched successfully',
+            'subCategories' => $subCategories
+        ], 200);
+    }
+
+    public function getAllInactiveSubCategory(Request $request)
+    {
+        $subCategories = SubCategory::where('status', 'inactive')->get();
+        return response()->json([
+            'success' => true,
+            'message' => 'SubCategories Inactive fetched successfully',
+            'subCategories' => $subCategories
+        ], 200);
+    }
+
+
 }

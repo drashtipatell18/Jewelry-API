@@ -44,11 +44,16 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/categories/get/{id}', [CategoryController::class, 'getCategory']);
     Route::post('/categories/update/{id}', [CategoryController::class, 'updateCategory']);
     Route::delete('/categories/delete/{id}', [CategoryController::class, 'deleteCategory']);
-
+    Route::post('/categories/updatestatus/{id}', [CategoryController::class, 'updateStatusCategory']);
+    Route::get('/categories/getallactive', [CategoryController::class, 'getAllActiveCategory']);
+    Route::get('/categories/getallinactive', [CategoryController::class, 'getAllInactiveCategory']);
     // SubCategory
     Route::post('/subcategories/create', [SubCategoryController::class, 'createSubCategory']);
     Route::get('/subcategories/getall', [SubCategoryController::class, 'getAllSubCategory']);
     Route::get('/subcategories/get/{id}', [SubCategoryController::class, 'getSubCategory']);
     Route::post('/subcategories/update/{id}', [SubCategoryController::class, 'updateSubCategory']);
     Route::delete('/subcategories/delete/{id}', [SubCategoryController::class, 'deleteSubCategory']);
+    Route::post('/subcategories/updatestatus/{id}', [SubCategoryController::class, 'updateStatusSubCategory']);
+    Route::get('/subcategories/getallactive', [SubCategoryController::class, 'getAllActiveSubCategory']);
+    Route::get('/subcategories/getallinactive', [SubCategoryController::class, 'getAllInactiveSubCategory']);
 });
