@@ -31,9 +31,11 @@ class UserController extends Controller
             return response()->json($validateUser->errors(), 401);
         }
         $filename = '';
-        $image = $request->file('image');
-        $filename = time() . '.' . $image->getClientOriginalExtension();
-        $image->move(public_path('images'), $filename);
+        if($request->hasFile('image')){
+            $image = $request->file('image');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images'), $filename);
+        }
         $user = User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
@@ -46,7 +48,15 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'User created successfully',
-            'user' => $user
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'image' => url('images/'.$filename),
+                'role_id' => $user->role_id,
+                'phone' => $user->phone,
+                'address' => $user->address,
+            ]
         ], 200);
     }
 
@@ -59,7 +69,17 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Users Get All successfully',
-            'users' => $users
+            'users' => $users->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'image' => url('images/'.$user->image),
+                    'role_id' => $user->role_id,
+                    'phone' => $user->phone,
+                    'address' => $user->address,
+                ];
+            })
         ], 200);
     }
 
@@ -69,7 +89,13 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'User Get successfully',
-            'user' => $user
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'image' => url('images/'.$user->image),
+                'role_id' => $user->role_id,
+            ]
         ], 200);
     }
 
@@ -111,7 +137,15 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'User Update successfully',
-            'user' => $user
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'image' => url('images/'.$filename),
+                'role_id' => $user->role_id,
+                'phone' => $user->phone,
+                'address' => $user->address,
+            ]
         ], 200);
     }
 
@@ -125,7 +159,15 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'User Delete successfully',
-            'user' => $user
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'image' => url('images/'.$user->image),
+                'role_id' => $user->role_id,
+                'phone' => $user->phone,
+                'address' => $user->address,
+            ]
         ], 200);
     }
 
@@ -162,7 +204,15 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'User Profile Update successfully',
-            'user' => $user
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'image' => url('images/'.$filename),
+                'role_id' => $user->role_id,
+                'phone' => $user->phone,
+                'address' => $user->address,
+            ]
         ], 200);
     }
 
