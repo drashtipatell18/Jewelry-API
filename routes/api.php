@@ -20,7 +20,9 @@ use App\Http\Controllers\MainCategoryController;
 
 
 Route::post('/auth/login', [LoginController::class, 'login']);
-
+Route::post('/user/updateprofile/{id}', [UserController::class, 'updateProfile']);
+Route::post('password/email', [UserController::class, 'sendResetLinkEmail']);
+Route::post('password/reset/{token}', [UserController::class, 'postReset']);
 // auth
 Route::middleware('auth.api')->group(function () {
 

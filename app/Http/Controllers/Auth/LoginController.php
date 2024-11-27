@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Role;
 
@@ -44,31 +45,35 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        $validateUser = Validator::make($request->all(), [
+        $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
         ]);
+        $user = User::where('email', $credentials['email'])->first();
 
-        if ($validateUser->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'error' => $validateUser->errors()
-            ], 401);
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found'], 404);
         }
 
-        // Find user by email
-        $user = User::where('email', $request->input('email'))->first();
+        // Check if the password matches
+        if (!Hash::check($credentials['password'], $user->password)) {
+            return response()->json(['success' => false, 'message' => 'Invalid credentials'], 401);
+        }
 
-        // Create token and respond with user info
-        $token = $user->createToken($user->role_id)->plainTextToken;
+        $token = $user->createToken('User Token')->plainTextToken;
 
         return response()->json([
-            'id' => $user->id,
+            'success' => true,
+            'message' => 'Login successfully',
+            'result' => [
+                'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
             'access_token' => $token,
             'role' => Role::find($user->role_id)->name,
+            ],
         ]);
     }
+
+
 }
