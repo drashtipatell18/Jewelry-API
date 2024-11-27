@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\MainCategoryController;
+use App\Http\Controllers\CategoryController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -37,12 +37,11 @@ Route::middleware('auth.api')->group(function () {
     Route::delete('/user/delete/{id}', [UserController::class, 'deleteUser']);
     Route::post('/user/updateprofile/{id}', [UserController::class, 'updateProfile']);
 
-    // MainCategory
-
-    Route::get('/main-categories', [MainCategoryController::class, 'index']);
-    Route::post('/main-categories', [MainCategoryController::class, 'store']);
-    Route::get('/main-categories/edit/{id}', [MainCategoryController::class, 'edit']);
-    Route::put('/main-categories/update/{id}', [MainCategoryController::class, 'update']);
-    Route::delete('/main-categories/delete/{id}', [MainCategoryController::class, 'destroy']);
+    // Category
+    Route::post('/categories/create', [CategoryController::class, 'createCategory']);
+    Route::get('/categories/getall', [CategoryController::class, 'getAllCategory']);
+    Route::get('/categories/get/{id}', [CategoryController::class, 'getCategory']);
+    Route::post('/categories/update/{id}', [CategoryController::class, 'updateCategory']);
+    Route::delete('/categories/delete/{id}', [CategoryController::class, 'deleteCategory']);
 
 });
