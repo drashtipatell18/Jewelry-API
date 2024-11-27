@@ -7,6 +7,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SubCategoryController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -44,4 +45,10 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/categories/update/{id}', [CategoryController::class, 'updateCategory']);
     Route::delete('/categories/delete/{id}', [CategoryController::class, 'deleteCategory']);
 
+    // SubCategory
+    Route::post('/subcategories/create', [SubCategoryController::class, 'createSubCategory']);
+    Route::get('/subcategories/getall', [SubCategoryController::class, 'getAllSubCategory']);
+    Route::get('/subcategories/get/{id}', [SubCategoryController::class, 'getSubCategory']);
+    Route::post('/subcategories/update/{id}', [SubCategoryController::class, 'updateSubCategory']);
+    Route::delete('/subcategories/delete/{id}', [SubCategoryController::class, 'deleteSubCategory']);
 });
