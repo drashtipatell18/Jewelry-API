@@ -23,11 +23,12 @@ class SubCategoryController extends Controller
             return response()->json($validateSubCategory->errors(), 401);
         }
 
-        $image = $request->file('image');
-        $imageName = time() . '.' . $image->getClientOriginalExtension();
-        $image->move(public_path('images/subcategories'), $imageName);
-        $imageName = url('images/subcategories/' . $imageName); // Generate the full URL for the image
-
+        $imageName = null;
+        if($request->hasFile('image')){
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/subcategories'), $imageName);
+        }
         $subCategory = SubCategory::create([
             'name' => $request->input('name'),
             'category_id' => $request->input('category_id'),
@@ -40,7 +41,7 @@ class SubCategoryController extends Controller
                 'id' => $subCategory->id,
                 'name' => $subCategory->name,
                 'category_id' => $subCategory->category->name,
-                'image' => url('images/subcategories/' . $subCategory->image), // Return full URL here
+                'image' => $imageName ? url('images/subcategories/' . $imageName) : null,
             ]
         ], 200);
     }
@@ -51,12 +52,14 @@ class SubCategoryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'SubCategories fetched successfully',
-            'subCategories' => [
-                'id' => $subCategories->id,
-                'name' => $subCategories->name,
-                'category_id' => $subCategories->category->name,
-                'image' => url('images/subcategories/' . $subCategories->image), // Return full URL here
-            ]
+            'subCategories' => $subCategories->map(function($subCategory) {
+                return [
+                    'id' => $subCategory->id,
+                    'name' => $subCategory->name,
+                    'category_id' => $subCategory->category->name,
+                    'image' => url('images/subcategories/' . $subCategory->image), // Return full URL here
+                ];
+            }),
         ], 200);
     }
 
@@ -97,7 +100,6 @@ class SubCategoryController extends Controller
             $image = $request->file('image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('images/subcategories'), $imageName);
-            $imageName = url('images/subcategories/' . $imageName);
         }
         if(!$subCategory){
             return response()->json(['message' => 'SubCategory not found'], 404);
