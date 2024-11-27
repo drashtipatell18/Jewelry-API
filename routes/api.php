@@ -1,10 +1,12 @@
 <?php
 
+use App\Models\MainCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\MainCategoryController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -32,4 +34,13 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/user/update/{id}', [UserController::class, 'updateUser']);
     Route::delete('/user/delete/{id}', [UserController::class, 'deleteUser']);
     Route::post('/user/updateprofile/{id}', [UserController::class, 'updateProfile']);
+
+    // MainCategory
+
+    Route::get('/main-categories', [MainCategoryController::class, 'index']);
+    Route::post('/main-categories', [MainCategoryController::class, 'store']);
+    Route::get('/main-categories/edit/{id}', [MainCategoryController::class, 'edit']);
+    Route::put('/main-categories/update/{id}', [MainCategoryController::class, 'update']);
+    Route::delete('/main-categories/delete/{id}', [MainCategoryController::class, 'destroy']);
+
 });
