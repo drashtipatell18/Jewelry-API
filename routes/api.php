@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SubCategoryController;
+use App\Http\Controllers\SizeController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -47,7 +48,9 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/categories/updatestatus/{id}', [CategoryController::class, 'updateStatusCategory']);
     Route::get('/categories/getallactive', [CategoryController::class, 'getAllActiveCategory']);
     Route::get('/categories/getallinactive', [CategoryController::class, 'getAllInactiveCategory']);
+
     // SubCategory
+
     Route::post('/subcategories/create', [SubCategoryController::class, 'createSubCategory']);
     Route::get('/subcategories/getall', [SubCategoryController::class, 'getAllSubCategory']);
     Route::get('/subcategories/get/{id}', [SubCategoryController::class, 'getSubCategory']);
@@ -56,4 +59,11 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/subcategories/updatestatus/{id}', [SubCategoryController::class, 'updateStatusSubCategory']);
     Route::get('/subcategories/getallactive', [SubCategoryController::class, 'getAllActiveSubCategory']);
     Route::get('/subcategories/getallinactive', [SubCategoryController::class, 'getAllInactiveSubCategory']);
+
+    // Size
+    Route::post('/sizes/create', [SizeController::class, 'createSize']);
+    Route::get('/sizes/getall', [SizeController::class, 'getAllSizes']);
+    Route::get('/sizes/get/{id}', [SizeController::class, 'getSizeById']);
+    Route::post('/sizes/update/{id}', [SizeController::class, 'updateSize']);
+    Route::delete('/sizes/delete/{id}', [SizeController::class, 'deleteSize']);
 });
