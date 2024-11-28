@@ -12,6 +12,8 @@ use App\Http\Controllers\SizeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\ReviewController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -93,6 +95,12 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/stocks/getoutofstock', [StockController::class, 'getOutStock']);
     Route::get('/stocks/getinstock', [StockController::class, 'getInStock']);
     Route::get('/stocks/getlowstock', [StockController::class, 'getLowStock']);
+
+    // Review
+    Route::post('/reviews/create', [ReviewController::class, 'createReview']);
+    Route::get('/reviews/getall', [ReviewController::class, 'getAllReviews']);
+    Route::get('/reviews/get/{id}', [ReviewController::class, 'getReviewById']);
+    Route::delete('/reviews/delete/{id}', [ReviewController::class, 'deleteReview']);
 
     // Order
     Route::post('/orders/create', [OrderController::class, 'createOrder']);
