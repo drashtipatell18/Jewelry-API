@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\MainCategory;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -29,7 +27,8 @@ use App\Http\Controllers\DeliveryAddressController;
 Route::post('/auth/login', [LoginController::class, 'login']);
 Route::post('/user/updateprofile/{id}', [UserController::class, 'updateProfile']);
 Route::post('password/email', [UserController::class, 'sendResetLinkEmail']);
-Route::post('password/reset/{token}', [UserController::class, 'postReset']);
+Route::post('password/otp', [UserController::class, 'sendOTP']);
+Route::post('password/reset/{otp}', [UserController::class, 'postReset']);
 // auth
 Route::middleware('auth.api')->group(function () {
 
@@ -78,6 +77,7 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/order/get/{id}', [OrderController::class, 'getOrderById']);
     Route::post('/order/update/{id}', [OrderController::class, 'updateOrder']);
     Route::delete('/order/delete/{id}', [OrderController::class, 'deleteOrder']);
+
     // Product
     Route::post('/products/create', [ProductController::class, 'createProduct']);
     Route::get('/products/getall', [ProductController::class, 'getAllProducts']);

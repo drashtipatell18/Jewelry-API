@@ -5,22 +5,21 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\User;
 
 class ForgotPasswordMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user;
+    public $otp;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct($otp)
     {
-        $this->user = $user;
+        $this->otp = $otp;
     }
 
     /**
@@ -30,12 +29,10 @@ class ForgotPasswordMail extends Mailable
      */
     public function build()
     {
-        return $this->view('forgot_password')
-                    ->subject('Reset Password Notification')
+        return $this->view('otp_mail')
+                    ->subject('OTP Notification')
                     ->with([
-                        'token' => $this->user->remember_token,
-                        'user' => $this->user,
+                        'otp' => $this->otp,
                     ]);
     }
 }
-

@@ -21,6 +21,8 @@ class UserController extends Controller
 
         $validateUser = Validator::make($request->all(), [
             'name' => 'required',
+            'surname' => 'required',
+            'username' => 'required|unique:users,username',
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
             'phone' => 'required',
@@ -38,6 +40,8 @@ class UserController extends Controller
         }
         $user = User::create([
             'name' => $request->input('name'),
+            'surname' => $request->input('surname'),
+            'username' => $request->input('username'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
             'role_id' => $request->input('role_id'),
@@ -51,6 +55,8 @@ class UserController extends Controller
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
+                'surname' => $user->surname,
+                'username' => $user->username,
                 'email' => $user->email,
                 'image' => url('images/'.$filename),
                 'role_id' => $user->role_id,
@@ -73,6 +79,8 @@ class UserController extends Controller
                 return [
                     'id' => $user->id,
                     'name' => $user->name,
+                    'surname' => $user->surname,
+                    'username' => $user->username,
                     'email' => $user->email,
                     'image' => url('images/'.$user->image),
                     'role_id' => $user->role_id,
@@ -92,6 +100,8 @@ class UserController extends Controller
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
+                'surname' => $user->surname,
+                'username' => $user->username,
                 'email' => $user->email,
                 'image' => url('images/'.$user->image),
                 'role_id' => $user->role_id,
@@ -106,6 +116,8 @@ class UserController extends Controller
         }
         $validateUser = Validator::make($request->all(), [
             'name' => 'required',
+            'surname' => 'required',
+            'username' => 'required|unique:users,username,' . $id,
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'required',
             'phone' => 'required',
@@ -127,6 +139,8 @@ class UserController extends Controller
         }
         $user->update([
             'name' => $request->input('name'),
+            'surname' => $request->input('surname'),
+            'username' => $request->input('username'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
             'role_id' => $request->input('role_id'),
@@ -140,6 +154,8 @@ class UserController extends Controller
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
+                'surname' => $user->surname,
+                'username' => $user->username,
                 'email' => $user->email,
                 'image' => url('images/'.$filename),
                 'role_id' => $user->role_id,
@@ -162,6 +178,8 @@ class UserController extends Controller
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
+                'surname' => $user->surname,
+                'username' => $user->username,
                 'email' => $user->email,
                 'image' => url('images/'.$user->image),
                 'role_id' => $user->role_id,
@@ -175,6 +193,8 @@ class UserController extends Controller
     {
         $validateUser = Validator::make($request->all(), [
             'name' => 'required',
+            'surname' => 'required',
+            'username' => 'required|unique:users,username,' . $id,
             'email' => 'required|email|unique:users,email,' . $id,
             'phone' => 'required',
             'address' => 'required',
@@ -194,6 +214,8 @@ class UserController extends Controller
         }
         $user->update([
             'name' => $request->input('name'),
+            'surname' => $request->input('surname'),
+            'username' => $request->input('username'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
             'role_id' => $request->input('role_id'),
@@ -207,6 +229,8 @@ class UserController extends Controller
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
+                'surname' => $user->surname,
+                'username' => $user->username,
                 'email' => $user->email,
                 'image' => url('images/'.$filename),
                 'role_id' => $user->role_id,
@@ -225,13 +249,15 @@ class UserController extends Controller
             return response()->json($validateUser->errors(), 401);
         }
 
-        $email = $request->email;
-        $user = User::where('email', $email)->first();
+        $user = User::where('email', $request->email)->first();
+        $otp = str_pad(random_int(0, 9999), 4, '0', STR_PAD_LEFT); // Changed range to 0-9999 for 4-digit OTP
+        $user->password_reset_otp = $otp;
+        $user->password_reset_otp_expires_at = now()->addMinutes(15);
+        $user->save();
 
-        if ($user) {
-            $user->remember_token = Str::random(40);
-            $user->save();
-            Mail::to($user->email)->send(new ForgotPasswordMail($user));
+        if ($otp) {
+
+            Mail::to($user->email)->send(new ForgotPasswordMail($otp));
 
             return response()->json(['success' => true, 'message' => 'Password reset link sent successfully.'], 200);
         } else {
@@ -239,12 +265,32 @@ class UserController extends Controller
         }
     }
 
-    // Method to handle the form submission
-    public function postReset($token, Request $request)
+    public function sendOTP(Request $request)
     {
-        // Debugging line to check request data
-        // dd($request->all());
+        $validateUser = Validator::make($request->all(), [
+            'otp' => 'required|numeric|digits:4',
+        ]);
+        if($validateUser->fails()){
+            return response()->json($validateUser->errors(), 401);
+        }
+        $otp = $request->otp;
+        $user = User::where('password_reset_otp', $otp)->first();
+        if($user){
+            return response()->json([
+                'success' => true,
+                'message' => 'OTP verified successfully.'
+            ], 200);
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid OTP.'
+            ], 400);
+        }
+    }
 
+    // Method to handle the form submission
+    public function postReset($otp, Request $request)
+    {
         $validateUser = Validator::make($request->all(), [
             'new_password' => 'required|string|min:8',
             'confirm_password' => 'required|string|min:8|same:new_password',
@@ -258,7 +304,7 @@ class UserController extends Controller
             ], 401);
         }
 
-        $user = User::where('remember_token', $token)->first();
+        $user = User::where('password_reset_otp', $otp)->first();
 
         if ($user) {
             if (empty($user->email_verified_at)) {
