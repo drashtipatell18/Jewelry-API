@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OrderController;
 use App\Models\MainCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -66,4 +67,12 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/sizes/get/{id}', [SizeController::class, 'getSizeById']);
     Route::post('/sizes/update/{id}', [SizeController::class, 'updateSize']);
     Route::delete('/sizes/delete/{id}', [SizeController::class, 'deleteSize']);
+
+    // Order
+    Route::post('/order/create', [OrderController::class, 'createOrder']);
+    Route::get('/order/getall', [OrderController::class, 'getAllOrder']);
+    Route::get('/order/get/{id}', [OrderController::class, 'getOrderById']);
+    Route::post('/order/update/{id}', [OrderController::class, 'updateOrder']);
+    Route::delete('/order/delete/{id}', [OrderController::class, 'deleteOrder']);
+
 });
