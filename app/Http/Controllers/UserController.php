@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\ForgotPasswordMail;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 
@@ -318,5 +319,41 @@ class UserController extends Controller
         } else {
             return response()->json(['success' => false,'message' => 'Invalid token.'], 400);
         }
+    }
+
+    public function changePassword(Request $request)
+    {
+        $validateUser = Validator::make($request->all(), [
+            'current_password' => 'required',
+            'new_password' => 'required|string|min:8|same:confirm_password',
+            'confirm_password' => 'required|string|min:8|same:new_password',
+        ]);
+        if($validateUser->fails()){
+            return response()->json($validateUser->errors(), 401);
+        }
+
+        $user = Auth::user();
+        // Check if the user is authenticated
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not authenticated.'
+            ], 401);
+        }
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The current password is incorrect.'
+            ], 400);
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password changed successfully.'
+        ], 200);
     }
 }

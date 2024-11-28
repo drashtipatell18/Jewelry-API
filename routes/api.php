@@ -34,6 +34,7 @@ Route::middleware('auth.api')->group(function () {
 
     // role
     Route::get('/roles', [RoleController::class, 'getRole']);
+    Route::post('password/change', [UserController::class, 'changePassword']);
 
     // user
     Route::post('/user/create', [UserController::class, 'createUser']);
