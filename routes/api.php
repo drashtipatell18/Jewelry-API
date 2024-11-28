@@ -90,6 +90,8 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/products/update/{id}', [ProductController::class, 'updateProduct']);
     Route::delete('/products/delete/{id}', [ProductController::class, 'deleteProduct']);
     Route::delete('/products/allDelete', [ProductController::class, 'AllDeleteProduct']);
+    Route::post('/products/filter', [ProductController::class, 'filterProducts']);
+    Route::post('/products/updatestatus/{id}', [ProductController::class, 'updateStatusProduct']);
 
     // Stock
     Route::post('/stocks/create', [StockController::class, 'createStock']);
@@ -118,7 +120,7 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/coupons/update/{id}', [CouponController::class, 'updateCoupon']);
     Route::delete('/coupons/delete/{id}', [CouponController::class, 'deleteCoupon']);
     Route::delete('/coupons/allDelete', [CouponController::class, 'AllDeleteCoupon']);
-    
+
     // Delivery Address
     Route::post('/deliveryAddress/create', [DeliveryAddressController::class, 'createDeliveryAddress']);
     Route::get('/deliveryAddress/getall', [DeliveryAddressController::class, 'getAllDeliveryAddress']);
