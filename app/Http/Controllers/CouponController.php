@@ -21,6 +21,7 @@ class CouponController extends Controller
             'price' => 'required',
             'start_date' => 'nullable',
             'end_date' => 'nullable',
+            'status' => 'required|in:active,inactive',
         ]);
         if($validateCoupon->fails()){
             return response()->json($validateCoupon->errors(), 401);
@@ -33,6 +34,7 @@ class CouponController extends Controller
             'price' => $request->input('price'),
             'start_date' => $request->input('start_date'),
             'end_date' => $request->input('end_date'),
+            'status' => $request->input('status'),
         ]);
         return response()->json([
             'success' => true,
@@ -79,6 +81,7 @@ class CouponController extends Controller
             'price' => 'required',
             'start_date' => 'nullable',
             'end_date' => 'nullable',
+            'status' => 'required|in:active,inactive',
         ]);
         if($validateCoupon->fails()){
             return response()->json($validateCoupon->errors(), 401);
@@ -92,6 +95,7 @@ class CouponController extends Controller
             'price' => $request->input('price'),
             'start_date' => Carbon::parse($request->input('start_date'))->format('Y-m-d'),
             'end_date' => Carbon::parse($request->input('end_date'))->format('Y-m-d'),
+            'status' => $request->input('status'),
         ]);
 
         return response()->json([
@@ -128,6 +132,34 @@ class CouponController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'All Coupons deleted successfully'
+        ], 200);
+    }
+
+    public function filterCoupons(Request $request)
+    {
+        $query = Coupon::query();
+
+        // Filter by start date
+        if ($request->has('start_date') && $request->input('start_date') !== null) {
+            $query->where('start_date', '>=', Carbon::parse($request->input('start_date')));
+        }
+
+        // Filter by end date
+        if ($request->has('end_date') && $request->input('end_date') !== null) {
+            $query->where('end_date', '<=', Carbon::parse($request->input('end_date')));
+        }
+
+        // Filter by status (assuming 'active' or 'inactive' as possible statuses)
+        if ($request->has('status') && $request->input('status') !== null) {
+            $query->where('status', $request->input('status'));
+        }
+
+        $coupons = $query->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Filtered coupons fetched successfully',
+            'coupons' => $coupons
         ], 200);
     }
 }

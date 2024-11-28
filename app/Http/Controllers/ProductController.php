@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 
 class ProductController extends Controller
@@ -421,7 +422,7 @@ class ProductController extends Controller
 
         // Filter for Best Selling Products
         if ($request->has('best_selling') && $request->best_selling) {
-            $query->select('product_name', \DB::raw('SUM(price) as total_sales'))
+            $query->select('product_name', DB::raw('SUM(price) as total_sales'))
                   ->groupBy('product_name')
                   ->orderBy('total_sales', 'desc'); // Assuming you have a sales_count field
         }

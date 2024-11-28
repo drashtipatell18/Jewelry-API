@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('price');
             $table->dateTime('start_date')->nullable();
             $table->dateTime('end_date')->nullable();
+            $table->string('status');
             $table->timestamps();
             $table->softDeletes();
         });
