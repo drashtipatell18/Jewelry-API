@@ -15,7 +15,7 @@ class SizeController extends Controller
         }
         $validateSize = Validator::make($request->all(), [
             'name' => 'required',
-            'category_id' => 'required|exists:categories,id',
+            'size' => 'required',
         ]);
         if($validateSize->fails()){
             return response()->json($validateSize->errors(), 401);
@@ -23,7 +23,7 @@ class SizeController extends Controller
 
         $size = Size::create([
             'name' => $request->input('name'),
-            'category_id' => $request->input('category_id'),
+            'size' => $request->input('size'),
         ]);
         return response()->json([
             'success' => true,
@@ -55,7 +55,7 @@ class SizeController extends Controller
         }
         $validateSize = Validator::make($request->all(), [
             'name' => 'required',
-            'category_id' => 'required|exists:categories,id',
+            'size' => 'required',
         ]);
         if($validateSize->fails()){
             return response()->json($validateSize->errors(), 401);
@@ -63,7 +63,7 @@ class SizeController extends Controller
         $size = Size::find($id);
         $size->update([
             'name' => $request->input('name'),
-            'category_id' => $request->input('category_id'),
+            'size' => $request->input('size'),
         ]);
         return response()->json([
             'success' => true,
@@ -79,7 +79,7 @@ class SizeController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Size deleted successfully',
-            'size' => $size 
+            'size' => $size
         ], 200);
     }
 }

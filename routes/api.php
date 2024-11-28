@@ -11,7 +11,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\ReviewController;
-
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\DeliveryAddressController;
 /*
 |--------------------------------------------------------------------------
@@ -110,7 +110,14 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/orders/update/{id}', [OrderController::class, 'updateOrder']);
     Route::delete('/orders/delete/{id}', [OrderController::class, 'deleteOrder']);
 
-     // Delivery Address
+    // Coupon
+    Route::post('/coupons/create', [CouponController::class, 'createCoupon']);
+    Route::get('/coupons/getall', [CouponController::class, 'getAllCoupons']);
+    Route::get('/coupons/get/{id}', [CouponController::class, 'getCouponById']);
+    Route::post('/coupons/update/{id}', [CouponController::class, 'updateCoupon']);
+    Route::delete('/coupons/delete/{id}', [CouponController::class, 'deleteCoupon']);
+
+    // Delivery Address
     Route::post('/deliveryAddress/create', [DeliveryAddressController::class, 'createDeliveryAddress']);
     Route::get('/deliveryAddress/getall', [DeliveryAddressController::class, 'getAllDeliveryAddress']);
     Route::get('/deliveryAddress/get/{id}', [DeliveryAddressController::class, 'getDeliveryAddressById']);
