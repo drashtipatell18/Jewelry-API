@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\OrderController;
 use App\Models\MainCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +9,9 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SizeController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\StockController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,7 +22,6 @@ use App\Http\Controllers\SizeController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
 
 Route::post('/auth/login', [LoginController::class, 'login']);
 Route::post('/user/updateprofile/{id}', [UserController::class, 'updateProfile']);
@@ -74,5 +75,32 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/order/get/{id}', [OrderController::class, 'getOrderById']);
     Route::post('/order/update/{id}', [OrderController::class, 'updateOrder']);
     Route::delete('/order/delete/{id}', [OrderController::class, 'deleteOrder']);
+    // Product
+    Route::post('/products/create', [ProductController::class, 'createProduct']);
+    Route::get('/products/getall', [ProductController::class, 'getAllProducts']);
+    Route::get('/products/get/{id}', [ProductController::class, 'getProductById']);
+    Route::post('/products/update/{id}', [ProductController::class, 'updateProduct']);
+    Route::delete('/products/delete/{id}', [ProductController::class, 'deleteProduct']);
+
+    // Stock
+    Route::post('/stocks/create', [StockController::class, 'createStock']);
+    Route::get('/stocks/getall', [StockController::class, 'getAllStocks']);
+    Route::get('/stocks/get/{id}', [StockController::class, 'getStockById']);
+    Route::post('/stocks/update/{id}', [StockController::class, 'updateStock']);
+    Route::delete('/stocks/delete/{id}', [StockController::class, 'deleteStock']);
+
+    // Order
+    Route::post('/orders/create', [OrderController::class, 'createOrder']);
+    Route::get('/orders/getall', [OrderController::class, 'getAllOrders']);
+    Route::get('/orders/get/{id}', [OrderController::class, 'getOrderById']);
+    Route::post('/orders/update/{id}', [OrderController::class, 'updateOrder']);
+    Route::delete('/orders/delete/{id}', [OrderController::class, 'deleteOrder']);
+
+    // Order Detail
+    Route::post('/orderdetails/create', [OrderDetailController::class, 'createOrderDetail']);
+    Route::get('/orderdetails/getall', [OrderDetailController::class, 'getAllOrderDetails']);
+    Route::get('/orderdetails/get/{id}', [OrderDetailController::class, 'getOrderDetailById']);
+    Route::post('/orderdetails/update/{id}', [OrderDetailController::class, 'updateOrderDetail']);
+    Route::delete('/orderdetails/delete/{id}', [OrderDetailController::class, 'deleteOrderDetail']);
 
 });
