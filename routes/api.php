@@ -49,6 +49,7 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/categories/get/{id}', [CategoryController::class, 'getCategory']);
     Route::post('/categories/update/{id}', [CategoryController::class, 'updateCategory']);
     Route::delete('/categories/delete/{id}', [CategoryController::class, 'deleteCategory']);
+    Route::delete('/categories/allDelete', [CategoryController::class, 'AllDeleteCategory']);
     Route::post('/categories/updatestatus/{id}', [CategoryController::class, 'updateStatusCategory']);
     Route::get('/categories/getallactive', [CategoryController::class, 'getAllActiveCategory']);
     Route::get('/categories/getallinactive', [CategoryController::class, 'getAllInactiveCategory']);
@@ -60,6 +61,7 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/subcategories/get/{id}', [SubCategoryController::class, 'getSubCategory']);
     Route::post('/subcategories/update/{id}', [SubCategoryController::class, 'updateSubCategory']);
     Route::delete('/subcategories/delete/{id}', [SubCategoryController::class, 'deleteSubCategory']);
+    Route::delete('/subcategories/allDelete', [SubCategoryController::class, 'AllDeleteSubCategory']);
     Route::post('/subcategories/updatestatus/{id}', [SubCategoryController::class, 'updateStatusSubCategory']);
     Route::get('/subcategories/getallactive', [SubCategoryController::class, 'getAllActiveSubCategory']);
     Route::get('/subcategories/getallinactive', [SubCategoryController::class, 'getAllInactiveSubCategory']);
@@ -70,6 +72,8 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/sizes/get/{id}', [SizeController::class, 'getSizeById']);
     Route::post('/sizes/update/{id}', [SizeController::class, 'updateSize']);
     Route::delete('/sizes/delete/{id}', [SizeController::class, 'deleteSize']);
+    Route::delete('/sizes/allDelete', [SizeController::class, 'AllDeleteSize']);
+
 
     // Order
     Route::post('/order/create', [OrderController::class, 'createOrder']);
@@ -77,6 +81,7 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/order/get/{id}', [OrderController::class, 'getOrderById']);
     Route::post('/order/update/{id}', [OrderController::class, 'updateOrder']);
     Route::delete('/order/delete/{id}', [OrderController::class, 'deleteOrder']);
+    Route::delete('/orders/allDelete', [OrderController::class, 'AllDeleteOrder']);
 
     // Product
     Route::post('/products/create', [ProductController::class, 'createProduct']);
@@ -84,6 +89,7 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/products/get/{id}', [ProductController::class, 'getProductById']);
     Route::post('/products/update/{id}', [ProductController::class, 'updateProduct']);
     Route::delete('/products/delete/{id}', [ProductController::class, 'deleteProduct']);
+    Route::delete('/products/allDelete', [ProductController::class, 'AllDeleteProduct']);
 
     // Stock
     Route::post('/stocks/create', [StockController::class, 'createStock']);
@@ -91,6 +97,7 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/stocks/get/{id}', [StockController::class, 'getStockById']);
     Route::post('/stocks/update/{id}', [StockController::class, 'updateStock']);
     Route::delete('/stocks/delete/{id}', [StockController::class, 'deleteStock']);
+    Route::delete('/stocks/allDelete', [StockController::class, 'AllDeleteStock']);
     Route::post('/stock/filter', [StockController::class, 'filterStock']);
     Route::post('/stocks/updatestatus/{id}', [StockController::class, 'updateStatusStock']);
     Route::get('/stocks/getoutofstock', [StockController::class, 'getOutStock']);
@@ -102,13 +109,7 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/reviews/getall', [ReviewController::class, 'getAllReviews']);
     Route::get('/reviews/get/{id}', [ReviewController::class, 'getReviewById']);
     Route::delete('/reviews/delete/{id}', [ReviewController::class, 'deleteReview']);
-
-    // Order
-    Route::post('/orders/create', [OrderController::class, 'createOrder']);
-    Route::get('/orders/getall', [OrderController::class, 'getAllOrders']);
-    Route::get('/orders/get/{id}', [OrderController::class, 'getOrderById']);
-    Route::post('/orders/update/{id}', [OrderController::class, 'updateOrder']);
-    Route::delete('/orders/delete/{id}', [OrderController::class, 'deleteOrder']);
+    Route::delete('/reviews/allDelete', [ReviewController::class, 'AllDeleteReview']);
 
     // Coupon
     Route::post('/coupons/create', [CouponController::class, 'createCoupon']);
@@ -116,7 +117,8 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/coupons/get/{id}', [CouponController::class, 'getCouponById']);
     Route::post('/coupons/update/{id}', [CouponController::class, 'updateCoupon']);
     Route::delete('/coupons/delete/{id}', [CouponController::class, 'deleteCoupon']);
-
+    Route::delete('/coupons/allDelete', [CouponController::class, 'AllDeleteCoupon']);
+    
     // Delivery Address
     Route::post('/deliveryAddress/create', [DeliveryAddressController::class, 'createDeliveryAddress']);
     Route::get('/deliveryAddress/getall', [DeliveryAddressController::class, 'getAllDeliveryAddress']);

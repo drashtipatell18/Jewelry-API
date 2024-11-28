@@ -83,4 +83,16 @@ class ReviewController extends Controller
             'data' => $review
         ], 200);
     }
+
+    public function AllDeleteReview(Request $request)
+    {
+        if ($request->user()->role_id !== 1) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        Review::query()->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'All Reviews deleted successfully'
+        ], 200);
+    }
 }

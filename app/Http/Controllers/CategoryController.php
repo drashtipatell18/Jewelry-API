@@ -135,4 +135,16 @@ class CategoryController extends Controller
         ], 200);
     }
 
+    public function AllDeleteCategory(Request $request)
+    {
+        if ($request->user()->role_id !== 1) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        Category::query()->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'All Categories deleted successfully'
+        ], 200);
+    }
+
 }

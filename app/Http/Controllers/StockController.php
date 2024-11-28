@@ -133,7 +133,7 @@ class StockController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 400);
         }
-        
+
         $stock = Stock::find($id);
         if (!$stock) {
             return response()->json([
@@ -150,6 +150,18 @@ class StockController extends Controller
             'success' => true,
             'message' => 'Stock status updated successfully',
             'data' => $stock
+        ], 200);
+    }
+
+    public function AllDeleteStock(Request $request)
+    {
+        if ($request->user()->role_id !== 1) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        Stock::query()->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'All Stocks deleted successfully'
         ], 200);
     }
 

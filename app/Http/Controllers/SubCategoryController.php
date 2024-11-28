@@ -140,6 +140,18 @@ class SubCategoryController extends Controller
         ], 200);
     }
 
+    public function AllDeleteSubCategory(Request $request)
+    {
+        if ($request->user()->role_id !== 1) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        SubCategory::query()->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'All SubCategories deleted successfully'
+        ], 200);
+    }
+
     public function updateStatusSubCategory($id, Request $request)
     {
         if ($request->user()->role_id !== 1) {

@@ -82,4 +82,16 @@ class SizeController extends Controller
             'size' => $size
         ], 200);
     }
+
+    public function AllDeleteSize(Request $request)
+    {
+        if ($request->user()->role_id !== 1) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        Size::query()->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'All Sizes deleted successfully'
+        ], 200);
+    }
 }

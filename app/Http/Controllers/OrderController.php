@@ -29,7 +29,7 @@ class OrderController extends Controller
         do {
             $invoiceNumber = mt_rand(10000000, 99999999);
         } while (Order::where('invoice_number', $invoiceNumber)->exists());
-        
+
         $order = Order::create([
             'customer_id' => $request->input('customer_id'),
             'order_date' => $request->input('order_date'),
@@ -103,7 +103,19 @@ class OrderController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Order deleted successfully',
-            'order' => $order 
+            'order' => $order
+        ], 200);
+    }
+
+    public function AllDeleteOrder(Request $request)
+    {
+        if ($request->user()->role_id !== 1) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        Order::query()->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'All Orders deleted successfully'
         ], 200);
     }
 }

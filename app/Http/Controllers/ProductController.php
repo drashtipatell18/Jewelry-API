@@ -352,4 +352,16 @@ class ProductController extends Controller
             ]
         ], 200);
     }
+
+    public function AllDeleteProduct(Request $request)
+    {
+        if ($request->user()->role_id !== 1) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        Product::query()->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'All Products deleted successfully'
+        ], 200);
+    }
 }
