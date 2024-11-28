@@ -58,7 +58,7 @@ class OrderController extends Controller
     public function getOrderById(Request $request,$id)
     {
         // $order = Order::find($id);
-        $order = Order::with('customer')->find($id);
+        $order = Order::with('customer','deliveryAddress')->find($id);
         return response()->json([
             'success' => true,
             'message' => 'Order fetched successfully',

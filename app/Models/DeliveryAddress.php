@@ -11,4 +11,9 @@ class DeliveryAddress extends Model
     use HasFactory, SoftDeletes;
     protected $table = "delivery_address";
     protected $fillable = ['customer_id','deliveryAddress_id', 'address','status'];
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'deliveryAddress_id');
+    }
 }
