@@ -88,6 +88,11 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/stocks/get/{id}', [StockController::class, 'getStockById']);
     Route::post('/stocks/update/{id}', [StockController::class, 'updateStock']);
     Route::delete('/stocks/delete/{id}', [StockController::class, 'deleteStock']);
+    Route::post('/stock/filter', [StockController::class, 'filterStock']);
+    Route::post('/stocks/updatestatus/{id}', [StockController::class, 'updateStatusStock']);
+    Route::get('/stocks/getoutofstock', [StockController::class, 'getOutStock']);
+    Route::get('/stocks/getinstock', [StockController::class, 'getInStock']);
+    Route::get('/stocks/getlowstock', [StockController::class, 'getLowStock']);
 
     // Order
     Route::post('/orders/create', [OrderController::class, 'createOrder']);
