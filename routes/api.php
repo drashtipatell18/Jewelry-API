@@ -112,7 +112,7 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/reviews/get/{id}', [ReviewController::class, 'getReviewById']);
     Route::delete('/reviews/delete/{id}', [ReviewController::class, 'deleteReview']);
     Route::delete('/reviews/allDelete', [ReviewController::class, 'AllDeleteReview']);
-
+    Route::post('/reviews/DateSearch', [ReviewController::class, 'DateSearchReview']);
     // Coupon
     Route::post('/coupons/create', [CouponController::class, 'createCoupon']);
     Route::get('/coupons/getall', [CouponController::class, 'getAllCoupons']);
@@ -121,6 +121,7 @@ Route::middleware('auth.api')->group(function () {
     Route::delete('/coupons/delete/{id}', [CouponController::class, 'deleteCoupon']);
     Route::delete('/coupons/allDelete', [CouponController::class, 'AllDeleteCoupon']);
     Route::post('/coupons/filter', [CouponController::class, 'filterCoupons']);
+
     // Delivery Address
     Route::post('/deliveryAddress/create', [DeliveryAddressController::class, 'createDeliveryAddress']);
     Route::get('/deliveryAddress/getall', [DeliveryAddressController::class, 'getAllDeliveryAddress']);

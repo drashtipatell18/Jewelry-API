@@ -95,4 +95,15 @@ class ReviewController extends Controller
             'message' => 'All Reviews deleted successfully'
         ], 200);
     }
+
+    public function DateSearchReview(Request $request)
+    {
+        $reviews = Review::whereDate('date', '=', $request->input('date'))
+                ->get();
+        return response()->json([
+            'success' => true,
+            'message' => 'Reviews fetched successfully',
+            'data' => $reviews
+        ], 200);
+    }
 }
