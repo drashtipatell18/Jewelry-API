@@ -21,6 +21,7 @@ class Product extends Model
         'size_id',
         'size_name',
         'weight',
+        'status',
         'no_of_diamonds',
         'diamond_setting',
         'diamond_shape',

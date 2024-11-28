@@ -9,9 +9,5 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Size extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $fillable = ['category_id', 'name'];
-    public function category()
-    {
-        return $this->belongsTo(Category::class, 'category_id');
-    }
+    protected $fillable = ['name','size'];
 }

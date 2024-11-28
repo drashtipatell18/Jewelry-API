@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 
 class ProductController extends Controller
@@ -32,6 +33,7 @@ class ProductController extends Controller
             'diamond_shape' => 'required',
             'collection' => 'required',
             'gender' => 'required',
+            'status' => 'required|in:active,inactive',
             'qty' => 'required|integer|min:0',
             'price' => 'required|numeric|min:0',
             'discount' => 'nullable|numeric|min:0|max:100',
@@ -71,6 +73,7 @@ class ProductController extends Controller
             'qty' => $request->input('qty'),
             'price' => $request->input('price'),
             'discount' => $request->input('discount'),
+            'status' => $request->input('status'),
             'image' => $imageNames ? json_encode($imageNames) : null, // Store as JSON or null if no images
         ]);
 
@@ -100,6 +103,7 @@ class ProductController extends Controller
                     'diamond_shape' => $product->diamond_shape,
                     'collection' => $product->collection,
                     'gender' => $product->gender,
+                    'status' => $product->status,
                     'description' => $product->description,
                     'qty' => $product->qty,
                     'price' => $product->price,
@@ -138,6 +142,7 @@ class ProductController extends Controller
                 'diamond_shape' => $product->diamond_shape,
                 'collection' => $product->collection,
                 'gender' => $product->gender,
+                'status' => $product->status,
                 'description' => $product->description,
                 'qty' => $product->qty,
                 'price' => $product->price,
@@ -186,6 +191,7 @@ class ProductController extends Controller
                     'diamond_shape' => $product->diamond_shape,
                     'collection' => $product->collection,
                     'gender' => $product->gender,
+                    'status' => $product->status,
                     'description' => $product->description,
                     'qty' => $product->qty,
                     'price' => $product->price,
@@ -212,6 +218,7 @@ class ProductController extends Controller
             'sub_category_id' => 'required|exists:sub_categories,id',
             'metal_color' => 'required',
             'metal' => 'required',
+            'status' => 'required|in:active,inactive',
             'diamond_color' => 'required',
             'diamond_quality' => 'required',
             'clarity' => 'required',
@@ -256,6 +263,7 @@ class ProductController extends Controller
             'sub_category_id' => $request->input('sub_category_id'),
             'metal_color' => $request->input('metal_color'),
             'metal' => $request->input('metal'),
+            'status' => $request->input('status'),
             'diamond_color' => $request->input('diamond_color'),
             'diamond_quality' => json_encode($request->input('diamond_quality')),
             'clarity' => $request->input('clarity'),
@@ -287,6 +295,7 @@ class ProductController extends Controller
                 'sub_category_id' => $product->sub_category_id,
                 'metal_color' => $product->metal_color,
                 'metal' => $product->metal,
+                'status' => $product->status,
                 'diamond_color' => $product->diamond_color,
                 'diamond_quality' => $product->diamond_quality,
                 'clarity' => $product->clarity,
@@ -350,6 +359,85 @@ class ProductController extends Controller
                     'discount' => $product->discount,
                     'images' => $imageUrls,
             ]
+        ], 200);
+    }
+
+    public function AllDeleteProduct(Request $request)
+    {
+        if ($request->user()->role_id !== 1) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        Product::query()->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'All Products deleted successfully'
+        ], 200);
+    }
+
+    public function updateStatusProduct($id, Request $request)
+    {
+        $product = Product::find($id);
+        if(!$product){
+            return response()->json(['success' => false, 'message' => 'Product not found'], 404);
+        }
+        $product->update(['status' => $request->input('status')]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Product status updated successfully'
+        ], 200);
+    }
+
+    public function filterProducts(Request $request)
+    {
+        $query = Product::query();
+
+        // Filter by category
+        if ($request->has('category_id') && $request->category_id) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        // Filter by sub-category
+        if ($request->has('sub_category_id') && $request->sub_category_id) {
+            $query->where('sub_category_id', $request->sub_category_id);
+        }
+
+        // Filter by status
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by price range
+        if ($request->has('min_price') && $request->has('max_price')) {
+            $query->whereBetween('price', [$request->min_price, $request->max_price]);
+        }
+
+        // Sort by price
+        if ($request->has('sort') && $request->sort) {
+            if ($request->sort === 'price_low_high') {
+                $query->orderBy('price', 'asc');
+            } elseif ($request->sort === 'price_high_low') {
+                $query->orderBy('price', 'desc');
+            }
+        }
+
+        // Filter for Best Selling Products
+        if ($request->has('best_selling') && $request->best_selling) {
+            $query->select('product_name', DB::raw('SUM(price) as total_sales'))
+                  ->groupBy('product_name')
+                  ->orderBy('total_sales', 'desc'); // Assuming you have a sales_count field
+        }
+
+        // Filter for Low Stock Products
+        if ($request->has('low_stock') && $request->low_stock) {
+            $query->where('qty', '<=', 5); // Adjust the threshold as needed
+        }
+
+        $products = $query->get();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Filtered products fetched successfully',
+            'data' => $products
         ], 200);
     }
 }
