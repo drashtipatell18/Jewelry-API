@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('customer_id');
+            $table->unsignedBigInteger('deliveryAddress_id');
             $table->string('order_date');
             $table->string('total_amount');
             $table->string('order_status');
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('deliveryAddress_id')->references('id')->on('delivery_address')->onDelete('cascade');
         });
     }
 

@@ -18,7 +18,8 @@ class OrderController extends Controller
             'customer_id' => 'required|exists:users,id',
             'order_date'  => 'required',
             'total_amount' => 'required',
-            'order_status' => 'required'
+            'order_status' => 'required',
+            'deliveryAddress_id' => 'nullable'
         ]);
         if($validateOrder->fails()){
             return response()->json($validateOrder->errors(), 401);
@@ -35,6 +36,7 @@ class OrderController extends Controller
             'total_amount' => $request->input('total_amount'),
             'order_status' => $request->input('order_status'),
             'invoice_number' => $invoiceNumber,
+            'deliveryAddress_id' => $request->input('deliveryAddress_id')
         ]);
         return response()->json([
             'success' => true,
@@ -73,7 +75,8 @@ class OrderController extends Controller
             'customer_id' => 'required|exists:users,id',
             'order_date'  => 'required',
             'total_amount' => 'required',
-            'order_status' => 'required'
+            'order_status' => 'required',
+            'deliveryAddress_id' => 'nullable'
         ]);
         if($validateOrder->fails()){
             return response()->json($validateOrder->errors(), 401);
@@ -84,6 +87,7 @@ class OrderController extends Controller
             'order_date' => $request->input('order_date'),
             'total_amount' => $request->input('total_amount'),
             'order_status' => $request->input('order_status'),
+            'deliveryAddress_id' => $request->input('deliveryAddress_id'),
         ]);
         return response()->json([
             'success' => true,

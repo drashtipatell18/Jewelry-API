@@ -17,6 +17,7 @@ class DeliveryAddressController extends Controller
         $validateAddress = Validator::make($request->all(), [
             'customer_id' => 'required|exists:users,id',
             'address'  => 'nullable',
+            'status'   => 'nullable'
         ]);
         if($validateAddress->fails()){
             return response()->json($validateAddress->errors(), 401);
@@ -24,7 +25,8 @@ class DeliveryAddressController extends Controller
        
         $deliveryAddress = DeliveryAddress::create([
             'customer_id' => $request->input('customer_id'),
-            'address' => $request->input('address')
+            'address' => $request->input('address'),
+            'status' => $request->input('status')
         ]);
         return response()->json([
             'success' => true,
@@ -59,6 +61,7 @@ class DeliveryAddressController extends Controller
         $validateAddress = Validator::make($request->all(), [
             'customer_id' => 'required|exists:users,id',
             'address'  => 'nullable',
+            'status'   => 'nullable'
         ]);
         if($validateAddress->fails()){
             return response()->json($validateAddress->errors(), 401);
@@ -66,7 +69,8 @@ class DeliveryAddressController extends Controller
         $deliveryAddress = DeliveryAddress::find($id);
         $deliveryAddress->update([
             'customer_id' => $request->input('customer_id'),
-            'address' => $request->input('address')
+            'address' => $request->input('address'),
+            'status' => $request->input('status')
         ]);
         return response()->json([
             'success' => true,
