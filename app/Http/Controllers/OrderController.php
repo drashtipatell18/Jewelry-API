@@ -23,11 +23,18 @@ class OrderController extends Controller
         if($validateOrder->fails()){
             return response()->json($validateOrder->errors(), 401);
         }
+
+          // Generate a unique 6-digit invoice number
+        do {
+            $invoiceNumber = mt_rand(10000000, 99999999);
+        } while (Order::where('invoice_number', $invoiceNumber)->exists());
+        
         $order = Order::create([
             'customer_id' => $request->input('customer_id'),
             'order_date' => $request->input('order_date'),
             'total_amount' => $request->input('total_amount'),
-            'order_status' => $request->input('order_status')
+            'order_status' => $request->input('order_status'),
+            'invoice_number' => $invoiceNumber,
         ]);
         return response()->json([
             'success' => true,
@@ -42,14 +49,19 @@ class OrderController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Orders fetched successfully',
-            'sizes' => $orders
+            'orders' => $orders
         ], 200);
     }
 
-    public function getOrderById($id)
+    public function getOrderById(Request $request,$id)
     {
-        $order = Order::find($id);
-        return response()->json($order);
+        // $order = Order::find($id);
+        $order = Order::with('customer')->find($id);
+        return response()->json([
+            'success' => true,
+            'message' => 'Order fetched successfully',
+            'order' => $order,
+        ], 200);
     }
 
     public function updateOrder(Request $request, $id)
@@ -76,7 +88,7 @@ class OrderController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Order updated successfully',
-            'size' => $order
+            'order' => $order
         ], 200);
     }
 
@@ -87,7 +99,7 @@ class OrderController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Order deleted successfully',
-            'size' => $order 
+            'order' => $order 
         ], 200);
     }
 }

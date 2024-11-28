@@ -10,5 +10,10 @@ class Order extends Model
 {
     use HasFactory, SoftDeletes;
     protected $table = "orders";
-    protected $fillable = ['customer_id', 'order_date','total_amount','order_status'];
+    protected $fillable = ['customer_id', 'order_date','total_amount','order_status','invoice_number'];
+
+    public function customer()
+    {
+        return $this->belongsTo(User::class, 'customer_id');
+    }
 }

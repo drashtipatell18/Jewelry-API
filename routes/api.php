@@ -14,6 +14,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\ReviewController;
 
+use App\Http\Controllers\DeliveryAddressController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -109,11 +110,11 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/orders/update/{id}', [OrderController::class, 'updateOrder']);
     Route::delete('/orders/delete/{id}', [OrderController::class, 'deleteOrder']);
 
-    // Order Detail
-    Route::post('/orderdetails/create', [OrderDetailController::class, 'createOrderDetail']);
-    Route::get('/orderdetails/getall', [OrderDetailController::class, 'getAllOrderDetails']);
-    Route::get('/orderdetails/get/{id}', [OrderDetailController::class, 'getOrderDetailById']);
-    Route::post('/orderdetails/update/{id}', [OrderDetailController::class, 'updateOrderDetail']);
-    Route::delete('/orderdetails/delete/{id}', [OrderDetailController::class, 'deleteOrderDetail']);
+     // Delivery Address
+    Route::post('/deliveryAddress/create', [DeliveryAddressController::class, 'createDeliveryAddress']);
+    Route::get('/deliveryAddress/getall', [DeliveryAddressController::class, 'getAllDeliveryAddress']);
+    Route::get('/deliveryAddress/get/{id}', [DeliveryAddressController::class, 'getDeliveryAddressById']);
+    Route::post('/deliveryAddress/update/{id}', [DeliveryAddressController::class, 'updateDeliveryAddress']);
+    Route::delete('/deliveryAddress/delete/{id}', [DeliveryAddressController::class, 'deleteDeliveryAddress']);
 
 });
