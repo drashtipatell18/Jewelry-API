@@ -40,7 +40,8 @@ class SubCategoryController extends Controller
             'subCategory' => [
                 'id' => $subCategory->id,
                 'name' => $subCategory->name,
-                'category_id' => $subCategory->category->name,
+                'category_name' => $subCategory->category->name,
+                 'category_id' => $subCategory->category->id,
                 'image' => $imageName ? url('images/subcategories/' . $imageName) : null,
             ]
         ], 200);
@@ -56,7 +57,8 @@ class SubCategoryController extends Controller
                 return [
                     'id' => $subCategory->id,
                     'name' => $subCategory->name,
-                    'category_id' => $subCategory->category->name,
+                    'category_name' => $subCategory->category->name,
+                    'category_id' => $subCategory->category->id,
                     'image' => url('images/subcategories/' . $subCategory->image), // Return full URL here
                 ];
             }),
@@ -75,7 +77,8 @@ class SubCategoryController extends Controller
             'subCategory' => [
                 'id' => $subCategory->id,
                 'name' => $subCategory->name,
-                'category_id' => $subCategory->category->name,
+               'category_name' => $subCategory->category->name,
+                    'category_id' => $subCategory->category->id,
                 'image' => url('images/subcategories/' . $subCategory->image), // Return full URL here
             ]
         ], 200);
@@ -115,7 +118,8 @@ class SubCategoryController extends Controller
            'subCategory' => [
                 'id' => $subCategory->id,
                 'name' => $subCategory->name,
-                'category_id' => $subCategory->category->name,
+                'category_name' => $subCategory->category->name,
+                    'category_id' => $subCategory->category->id,
                 'image' => url('images/subcategories/' . $subCategory->image), // Return full URL here
             ]
         ], 200);
@@ -134,7 +138,8 @@ class SubCategoryController extends Controller
             'subCategory' => [
                 'id' => $subCategory->id,
                 'name' => $subCategory->name,
-                'category_id' => $subCategory->category->name,
+                'category_name' => $subCategory->category->name,
+                    'category_id' => $subCategory->category->id,
                 'image' => url('images/subcategories/' . $subCategory->image), // Return full URL here
             ]
         ], 200);
