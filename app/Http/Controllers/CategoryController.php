@@ -21,7 +21,8 @@ class CategoryController extends Controller
             return response()->json($validateCategory->errors(), 401);
         }
         $category = Category::create([
-            'name' => $request->input('name')
+            'name' => $request->input('name'),
+            'status'=>'active'
         ]);
         return response()->json([
             'success' => true,
