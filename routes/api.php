@@ -13,6 +13,7 @@ use App\Http\Controllers\StockController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\DeliveryAddressController;
+use App\Http\Controllers\ProductOfferController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -114,6 +115,18 @@ Route::middleware('auth.api')->group(function () {
     Route::delete('/reviews/delete/{id}', [ReviewController::class, 'deleteReview']);
     Route::delete('/reviews/allDelete', [ReviewController::class, 'AllDeleteReview']);
     Route::post('/reviews/DateSearch', [ReviewController::class, 'DateSearchReview']);
+
+    // Product Offer
+    Route::post('/productoffers/create', [ProductOfferController::class, 'createProductOffer']);
+    Route::get('/productoffers/getall', [ProductOfferController::class, 'getAllProductOffers']);
+    Route::get('/productoffers/get/{id}', [ProductOfferController::class, 'getProductOfferById']);
+    Route::post('/productoffers/update/{id}', [ProductOfferController::class, 'updateProductOffer']);
+    Route::delete('/productoffers/delete/{id}', [ProductOfferController::class, 'deleteProductOffer']);
+    Route::delete('/productoffers/allDelete', [ProductOfferController::class, 'AllDeleteProductOffer']);
+    Route::post('/productoffers/updatestatus/{id}', [ProductOfferController::class, 'updateStatusProductOffer']);
+    Route::get('/productoffers/getallactive', [ProductOfferController::class, 'getAllActiveProductOffer']);
+    Route::get('/productoffers/getallinactive', [ProductOfferController::class, 'getAllInactiveProductOffer']);
+    Route::post('/productoffers/filter', [ProductOfferController::class, 'filterProductOffers']);   
     // Coupon
     Route::post('/coupons/create', [CouponController::class, 'createCoupon']);
     Route::get('/coupons/getall', [CouponController::class, 'getAllCoupons']);

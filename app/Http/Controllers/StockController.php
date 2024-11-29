@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Stock;
+use App\Models\Category;
+use App\Models\SubCategory;
+use App\Models\Product;
 use Carbon\Carbon;
 
 class StockController extends Controller
@@ -36,12 +39,19 @@ class StockController extends Controller
             'status' => $request->input('status'),
             'qty' => $request->input('qty'),
         ]);
+        // Fetch associated names
+        $stock->category_name = Category::find($stock->category_id)->name;
+        $stock->sub_category_name = SubCategory::find($stock->sub_category_id)->name;
+        $stock->product_name = Product::find($stock->product_id)->product_name;
+
         return response()->json(
             [
                 'success' => true,
                 'message' => 'Stock created successfully',
                 'data' => $stock
-            ], 201);
+            ],
+            201
+        );
     }
 
     // public function getAllStocks()
@@ -53,7 +63,7 @@ class StockController extends Controller
     //         'data' => $stocks
     //     ], 200);
     // }
-        public function getAllStocks()
+    public function getAllStocks()
 {
     $stocks = Stock::with(['product', 'category', 'subCategory'])->get();
 
@@ -80,6 +90,7 @@ class StockController extends Controller
         'data' => $transformedStocks
     ], 200);
 }
+
 
     public function getStockById($id)
     {
@@ -121,6 +132,9 @@ class StockController extends Controller
             ], 404);
         }
         $stock->update($request->all());
+        $stock->category_name = Category::find($stock->category_id)->name;
+        $stock->sub_category_name = SubCategory::find($stock->sub_category_id)->name;
+        $stock->product_name = Product::find($stock->product_id)->product_name;
         return response()->json([
             'success' => true,
             'message' => 'Stock updated successfully',
