@@ -44,15 +44,42 @@ class StockController extends Controller
             ], 201);
     }
 
-    public function getAllStocks()
-    {
-        $stocks = Stock::all();
-        return response()->json([
-            'success' => true,
-            'message' => 'Stocks fetched successfully',
-            'data' => $stocks
-        ], 200);
-    }
+    // public function getAllStocks()
+    // {
+    //     $stocks = Stock::all();
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'Stocks fetched successfully',
+    //         'data' => $stocks
+    //     ], 200);
+    // }
+        public function getAllStocks()
+{
+    $stocks = Stock::with(['product', 'category', 'subCategory'])->get();
+
+    $transformedStocks = $stocks->map(function ($stock) {
+        return [
+            'id' => $stock->id,
+            'category_id' => $stock->category_id,
+            'category_name' => $stock->category->name ?? null,
+            'sub_category_id' => $stock->sub_category_id,
+            'sub_category_name' => $stock->subCategory->name ?? null,
+            'product_id' => $stock->product_id,
+            'product_name' => $stock->product->product_name ?? null,
+            'date' => $stock->date,
+            'status' => $stock->status,
+            'qty' => $stock->qty,
+            'created_at' => $stock->created_at,
+            'updated_at' => $stock->updated_at,
+        ];
+    });
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Stocks fetched successfully',
+        'data' => $transformedStocks
+    ], 200);
+}
 
     public function getStockById($id)
     {
