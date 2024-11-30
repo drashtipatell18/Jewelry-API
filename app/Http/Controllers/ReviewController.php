@@ -41,15 +41,35 @@ class ReviewController extends Controller
         ], 200);
     }
 
+    // public function getAllReviews()
+    // {
+    //     $reviews = Review::all();
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'Reviews fetched successfully',
+    //         'data' => $reviews
+    //     ], 200);
+    // }
     public function getAllReviews()
-    {
-        $reviews = Review::all();
-        return response()->json([
-            'success' => true,
-            'message' => 'Reviews fetched successfully',
-            'data' => $reviews
-        ], 200);
-    }
+{
+    $reviews = Review::with(['customer', 'product'])->get(); // Eager load customer and product relationships
+
+    $response = $reviews->map(function ($review) {
+        return [
+            'id' => $review->id,
+            'review' => $review->review_text, // Assuming a field 'review_text'
+            'rating' => $review->rating,     // Assuming a field 'rating'
+            'customer_name' => $review->customer->name, // Assuming a 'name' field in Customer model
+            'product_name' => $review->product->name,   // Assuming a 'name' field in Product model
+        ];
+    });
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Reviews fetched successfully',
+        'data' => $response
+    ], 200);
+}
 
     public function getReviewById($id)
     {
