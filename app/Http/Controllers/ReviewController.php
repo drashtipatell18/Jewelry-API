@@ -57,10 +57,13 @@ class ReviewController extends Controller
     $response = $reviews->map(function ($review) {
         return [
             'id' => $review->id,
-            'review' => $review->review_text, // Assuming a field 'review_text'
+            'date' => $review->date, // Assuming a field 'review_text'
+            'description' => $review->description, // Assuming a field 'review_text'
             'rating' => $review->rating,     // Assuming a field 'rating'
+            'customer_id' => $review->customer_id,     // Assuming a field 'rating'
+            'product_id' => $review->product_id,     // Assuming a field 'rating'
             'customer_name' => $review->customer->name, // Assuming a 'name' field in Customer model
-            'product_name' => $review->product->name,   // Assuming a 'name' field in Product model
+            'product_name' => $review->product->product_name,   // Assuming a 'name' field in Product model
         ];
     });
 
