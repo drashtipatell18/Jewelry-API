@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Product;
+use App\Models\Category;
+use App\Models\SubCategory;
 
 class ProductController extends Controller
 {
@@ -80,6 +82,8 @@ class ProductController extends Controller
         $imageUrls = array_map(function($imageName) {
             return url('images/products/' . $imageName);
         }, $imageNames);
+        $catName = $product->category_name = Category::find($product->category_id)->name;
+        $subCatName = $product->sub_category_name = SubCategory::find($product->sub_category_id)->name;
 
         return response()->json(
             [
@@ -90,6 +94,8 @@ class ProductController extends Controller
                     'product_name' => $product->product_name,
                     'category_id' => $product->category_id,
                     'sub_category_id' => $product->sub_category_id,
+                    'category_name' =>$catName,
+                    'sub_category_name' => $subCatName,
                     'metal_color' => $product->metal_color,
                     'metal' => $product->metal,
                     'diamond_color' => $product->diamond_color,
@@ -115,7 +121,7 @@ class ProductController extends Controller
 
     public function getAllProducts()
     {
-        $products = Product::all();
+        $products = Product::with(['category', 'subCategory'])->get();
         $productData = [];
 
         foreach($products as $product) {
@@ -129,6 +135,8 @@ class ProductController extends Controller
                 'product_name' => $product->product_name,
                 'category_id' => $product->category_id,
                 'sub_category_id' => $product->sub_category_id,
+                'category_name' => $product->category ? $product->category->name : null,
+                'sub_category_name' => $product->subCategory ? $product->subCategory->name : null,
                 'metal_color' => $product->metal_color,
                 'metal' => $product->metal,
                 'diamond_color' => $product->diamond_color,
@@ -169,7 +177,8 @@ class ProductController extends Controller
         $imageUrls = array_map(function($imageName) {
             return url('images/products/' . $imageName);
         }, $imageUrls);
-
+         $catName = $product->category_name = Category::find($product->category_id)->name;
+        $subCatName = $product->sub_category_name = SubCategory::find($product->sub_category_id)->name;
         return response()->json([
             'status' => 'success',
             'message' => 'Product fetched successfully',
@@ -178,6 +187,8 @@ class ProductController extends Controller
                     'product_name' => $product->product_name,
                     'category_id' => $product->category_id,
                     'sub_category_id' => $product->sub_category_id,
+                      'category_name' =>$catName,
+                    'sub_category_name' => $subCatName,
                     'metal_color' => $product->metal_color,
                     'metal' => $product->metal,
                     'diamond_color' => $product->diamond_color,
@@ -284,6 +295,8 @@ class ProductController extends Controller
         $imageUrls = array_map(function($imageName) {
             return url('images/products/' . $imageName);
         }, $imageNames);
+           $catName = $product->category_name = Category::find($product->category_id)->name;
+        $subCatName = $product->sub_category_name = SubCategory::find($product->sub_category_id)->name;
 
         return response()->json([
             'success' => true,
@@ -293,6 +306,8 @@ class ProductController extends Controller
                 'product_name' => $product->product_name,
                 'category_id' => $product->category_id,
                 'sub_category_id' => $product->sub_category_id,
+                  'category_name' =>$catName,
+                    'sub_category_name' => $subCatName,
                 'metal_color' => $product->metal_color,
                 'metal' => $product->metal,
                 'status' => $product->status,
@@ -331,7 +346,8 @@ class ProductController extends Controller
         $imageUrls = array_map(function($imageName) {
             return url('images/products/' . $imageName);
         }, $imageUrls);
-
+   $catName = $product->category_name = Category::find($product->category_id)->name;
+        $subCatName = $product->sub_category_name = SubCategory::find($product->sub_category_id)->name;
         return response()->json([
             'status' => 'success',
             'message' => 'Product deleted successfully',
@@ -340,6 +356,8 @@ class ProductController extends Controller
                     'product_name' => $product->product_name,
                     'category_id' => $product->category_id,
                     'sub_category_id' => $product->sub_category_id,
+                      'category_name' =>$catName,
+                    'sub_category_name' => $subCatName,
                     'metal_color' => $product->metal_color,
                     'metal' => $product->metal,
                     'diamond_color' => $product->diamond_color,
