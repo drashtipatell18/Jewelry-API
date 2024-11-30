@@ -86,13 +86,13 @@ public function getAllReviews()
                 $decodedImages = json_decode($review->product->image, true);
                 if (json_last_error() === JSON_ERROR_NONE) {
                     $productImages = array_map(function ($image) {
-                        return url('images/' . $image);
+                        return url('images/products/' . $image);
                     }, $decodedImages);
                 } else {
                     // Assume it's a comma-separated string
                     $imageArray = explode(',', $review->product->image);
                     $productImages = array_map(function ($image) {
-                        return url('images/' . trim($image));
+                        return url('images/products/' . trim($image));
                     }, $imageArray);
                 }
             }
