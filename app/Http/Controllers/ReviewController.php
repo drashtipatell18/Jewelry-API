@@ -50,20 +50,67 @@ class ReviewController extends Controller
     //         'data' => $reviews
     //     ], 200);
     // }
-    public function getAllReviews()
+//     public function getAllReviews()
+// {
+//     $reviews = Review::with(['customer', 'product'])->get(); // Eager load customer and product relationships
+
+//     $response = $reviews->map(function ($review) {
+//         return [
+//             'id' => $review->id,
+//             'date' => $review->date, // Assuming a field 'review_text'
+//             'description' => $review->description, // Assuming a field 'review_text'
+//             'rating' => $review->rating,     // Assuming a field 'rating'
+//             'customer_id' => $review->customer_id,     // Assuming a field 'rating'
+//             'product_id' => $review->product_id,     // Assuming a field 'rating'
+//             'customer_name' =>isset( $review->customer->name)? $review->customer->name:'', // Assuming a 'name' field in Customer model
+//             'product_name' => isset($review->product->product_name)?$review->product->product_name:'',   // Assuming a 'name' field in Product model
+//         ];
+//     });
+
+//     return response()->json([
+//         'success' => true,
+//         'message' => 'Reviews fetched successfully',
+//         'data' => $response
+//     ], 200);
+// }
+public function getAllReviews()
 {
     $reviews = Review::with(['customer', 'product'])->get(); // Eager load customer and product relationships
 
     $response = $reviews->map(function ($review) {
+        $productImages = [];
+        if (!empty($review->product->image)) {
+            // Handle comma-separated or JSON-encoded image strings
+            if (is_string($review->product->image)) {
+                // Check if it's JSON-encoded
+                $decodedImages = json_decode($review->product->image, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $productImages = array_map(function ($image) {
+                        return url('images/' . $image);
+                    }, $decodedImages);
+                } else {
+                    // Assume it's a comma-separated string
+                    $imageArray = explode(',', $review->product->image);
+                    $productImages = array_map(function ($image) {
+                        return url('images/' . trim($image));
+                    }, $imageArray);
+                }
+            }
+        }
+
         return [
             'id' => $review->id,
-            'date' => $review->date, // Assuming a field 'review_text'
-            'description' => $review->description, // Assuming a field 'review_text'
-            'rating' => $review->rating,     // Assuming a field 'rating'
-            'customer_id' => $review->customer_id,     // Assuming a field 'rating'
-            'product_id' => $review->product_id,     // Assuming a field 'rating'
-            'customer_name' =>isset( $review->customer->name)? $review->customer->name:'', // Assuming a 'name' field in Customer model
-            'product_name' => isset($review->product->product_name)?$review->product->product_name:'',   // Assuming a 'name' field in Product model
+            'date' => $review->date, // Assuming a field 'date' exists
+            'description' => $review->description, // Assuming a field 'description' exists
+            'rating' => $review->rating, // Assuming a field 'rating' exists
+            'customer_id' => $review->customer_id, // Assuming a field 'customer_id' exists
+            'product_id' => $review->product_id, // Assuming a field 'product_id' exists
+            'customer_name' => $review->customer->name ?? '', // Assuming 'name' field exists in Customer model
+            'product_name' => $review->product->product_name ?? '', // Assuming 'product_name' exists in Product model
+            'customer_image' => $review->customer->image 
+                ? url('images/' . $review->customer->image) 
+                : '',
+            'product_images' => $productImages, // Array of image URLs
         ];
     });
 
