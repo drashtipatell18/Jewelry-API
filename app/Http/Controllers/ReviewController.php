@@ -62,8 +62,8 @@ class ReviewController extends Controller
             'rating' => $review->rating,     // Assuming a field 'rating'
             'customer_id' => $review->customer_id,     // Assuming a field 'rating'
             'product_id' => $review->product_id,     // Assuming a field 'rating'
-            'customer_name' => $review->customer->name, // Assuming a 'name' field in Customer model
-            'product_name' => $review->product->product_name,   // Assuming a 'name' field in Product model
+            'customer_name' =>isset( $review->customer->name)? $review->customer->name:'', // Assuming a 'name' field in Customer model
+            'product_name' => isset($review->product->product_name)?$review->product->product_name:'',   // Assuming a 'name' field in Product model
         ];
     });
 
