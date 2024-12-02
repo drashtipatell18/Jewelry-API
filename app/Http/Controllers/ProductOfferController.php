@@ -308,21 +308,43 @@ class ProductOfferController extends Controller
     }
 
     public function updateStatusProductOffer(Request $request, $id)
-    {
-        if ($request->user()->role_id !== 1) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $productOffer = ProductOffer::find($id);
-        $productOffer->update([
-            'status' => $request->input('status'),
-        ]);
-        return response()->json([
-            'success' => true,
-            'message' => 'Product Offer status updated successfully',
-            'productOffer' => $productOffer
-        ], 200);
+{
+    if ($request->user()->role_id !== 1) {
+        return response()->json(['message' => 'Unauthorized'], 403);
     }
+
+    $productOffer = ProductOffer::find($id);
+    $productOffer->update([
+        'status' => $request->input('status'),
+    ]);
+
+    // Get only category and product names
+    $categoryName = $productOffer->category->name ?? null; // Assuming a relationship named 'category'
+    $productName = $productOffer->product->product_name ?? null;
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Product Offer status updated successfully',
+        'productOffer' => [
+            'id' => $productOffer->id,
+            'category' => $categoryName,
+            'product' => $productName,
+            'name' => $productOffer->name,
+            'code' => $productOffer->code,
+            'start_date' => $productOffer->start_date,
+            'end_date' => $productOffer->end_date,
+            'minimum_purchase' => $productOffer->minimum_purchase,
+            'minimum_discount' => $productOffer->minimum_discount,
+            'type' => $productOffer->type,
+            'image' => $productOffer->image,
+            'status' => $productOffer->status,
+            'description' => $productOffer->description,
+            'price' => $productOffer->price,
+            'created_at' => $productOffer->created_at,
+            'updated_at' => $productOffer->updated_at,
+        ],
+    ], 200);
+}
 
     public function filterProductOffers(Request $request)
     {
