@@ -171,6 +171,12 @@ class ProductOfferController extends Controller
         if($validateProductOffer->fails()){
             return response()->json($validateProductOffer->errors(), 401);
         }
+        
+         if($request->hasFile('image')){
+            $image = $request->file('image');
+            $imageName = time().'.'.$image->getClientOriginalExtension();
+            $image->move(public_path('images/product_offers'), $imageName);
+        }
 
         $productOffer = ProductOffer::with('category', 'subcategory', 'product')->find($id);
         $productOffer->update([
@@ -188,6 +194,7 @@ class ProductOfferController extends Controller
             'minimum_discount' => $request->input('minimum_discount'),
             'discount' => $request->input('discount'),
             'type' => $request->input('type'),
+            'image'=> $imageName
         ]);
         if(!$productOffer){
             return response()->json(['message' => 'Product Offer not found'], 404);
@@ -218,6 +225,7 @@ class ProductOfferController extends Controller
             ]
         ], 200);
     }
+
 
     public function deleteProductOffer(Request $request, $id)
     {
