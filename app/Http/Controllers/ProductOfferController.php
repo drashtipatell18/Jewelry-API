@@ -96,7 +96,10 @@ class ProductOfferController extends Controller
                     'product_id' => isset($productOffer->product_id) ? $productOffer->product_id : null,
                     'category' => isset($productOffer->category) ? $productOffer->category->name : null,
                     'subcategory' => isset($productOffer->subcategory) ? $productOffer->subcategory->name : null,
-                    'product' => isset($productOffer->product) ? $productOffer->product->product_name : null,
+                    'product' => isset($productOffer->product) ? $productOffer->product->product_name : null,                        
+    'product_image' => isset($productOffer->product) 
+    ? url('images/products/' . json_decode($productOffer->product->image, true)[0]) 
+    : null,
                     'name' => $productOffer->name,
                     'code' => $productOffer->code,
                     'description' => $productOffer->description,
