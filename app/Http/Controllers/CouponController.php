@@ -134,7 +134,22 @@ class CouponController extends Controller
             'message' => 'All Coupons deleted successfully'
         ], 200);
     }
+        public function updateStatusCoupon(Request $request, $id)
+    {
+        if ($request->user()->role_id !== 1) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
 
+        $coupon = Coupon::find($id);
+        $coupon->update([
+            'status' => $request->input('status'),
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Coupon status updated successfully',
+            'coupon' =>$coupon
+        ], 200);
+    }
     public function filterCoupons(Request $request)
     {
         $query = Coupon::query();
