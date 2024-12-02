@@ -320,10 +320,7 @@ class ProductOfferController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Product Offer status updated successfully',
-            'productOffer' => [
-                'id' => $productOffer->id,
-                'status' => $productOffer->status,
-            ]
+            'productOffer' => $productOffer
         ], 200);
     }
 
