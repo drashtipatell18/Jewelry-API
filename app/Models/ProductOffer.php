@@ -21,6 +21,7 @@ class ProductOffer extends Model
         'end_date',
         'minimum_purchase',
         'minimum_discount',
+        'discount',
         'type',
         'image'
     ];

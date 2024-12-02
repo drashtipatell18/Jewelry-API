@@ -51,6 +51,7 @@ class ProductOfferController extends Controller
             'end_date' => Carbon::parse($request->input('end_date'))->format('Y-m-d'),
             'minimum_purchase' => $request->input('minimum_purchase'),
             'minimum_discount' => $request->input('minimum_discount'),
+            'discount' => $request->input('discount'),
             'type' => $request->input('type'),
             'image' => $imageName,
         ]);
@@ -74,6 +75,7 @@ class ProductOfferController extends Controller
                 'end_date' => $productOffer->end_date,
                 'minimum_purchase' => $productOffer->minimum_purchase,
                 'minimum_discount' => $productOffer->minimum_discount,
+                'discount' => $productOffer->discount,
                 'type' => $productOffer->type,
                 'image' => url('images/product_offers/'.$productOffer->image),
             ]
@@ -104,6 +106,7 @@ class ProductOfferController extends Controller
                     'end_date' => $productOffer->end_date,
                     'minimum_purchase' => $productOffer->minimum_purchase,
                     'minimum_discount' => $productOffer->minimum_discount,
+                    'discount' => $productOffer->discount,
                     'type' => $productOffer->type,
                     'image' => url('images/product_offers/'.$productOffer->image),
                 ];
@@ -137,6 +140,7 @@ class ProductOfferController extends Controller
                 'end_date' => $productOffer->end_date,
                 'minimum_purchase' => $productOffer->minimum_purchase,
                 'minimum_discount' => $productOffer->minimum_discount,
+                'discount' => $productOffer->discount,
                 'type' => $productOffer->type,
                 'image' => url('images/product_offers/'.$productOffer->image),
             ]
@@ -182,6 +186,7 @@ class ProductOfferController extends Controller
             'end_date' => Carbon::parse($request->input('end_date'))->format('Y-m-d'),
             'minimum_purchase' => $request->input('minimum_purchase'),
             'minimum_discount' => $request->input('minimum_discount'),
+            'discount' => $request->input('discount'),
             'type' => $request->input('type'),
         ]);
         if(!$productOffer){
@@ -207,6 +212,7 @@ class ProductOfferController extends Controller
                 'end_date' => $productOffer->end_date,
                 'minimum_purchase' => $productOffer->minimum_purchase,
                 'minimum_discount' => $productOffer->minimum_discount,
+                'discount' => $productOffer->discount,
                 'type' => $productOffer->type,
                 'image' => url('images/product_offers/'.$productOffer->image),
             ]
