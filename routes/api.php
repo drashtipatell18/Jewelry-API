@@ -149,7 +149,7 @@ Route::middleware('auth.api')->group(function () {
     Route::delete('/coupons/delete/{id}', [CouponController::class, 'deleteCoupon']);
     Route::delete('/coupons/allDelete', [CouponController::class, 'AllDeleteCoupon']);
     Route::post('/coupons/filter', [CouponController::class, 'filterCoupons']);
-
+    Route::post('/coupons/updatestatus/{id}', [CouponController::class, 'updateStatusCoupon']);
     // Delivery Address
     Route::post('/deliveryAddress/create', [DeliveryAddressController::class, 'createDeliveryAddress']);
     Route::get('/deliveryAddress/getall', [DeliveryAddressController::class, 'getAllDeliveryAddress']);
