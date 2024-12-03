@@ -174,14 +174,14 @@ class ProductOfferController extends Controller
         if($validateProductOffer->fails()){
             return response()->json($validateProductOffer->errors(), 401);
         }
-        
+        $productOffer = ProductOffer::with('category', 'subcategory', 'product')->find($id);
+          $imageName = $productOffer->image;
          if($request->hasFile('image')){
             $image = $request->file('image');
             $imageName = time().'.'.$image->getClientOriginalExtension();
             $image->move(public_path('images/product_offers'), $imageName);
         }
 
-        $productOffer = ProductOffer::with('category', 'subcategory', 'product')->find($id);
         $productOffer->update([
             'category_id' => $request->input('category_id'),
             'subcategory_id' => $request->input('subcategory_id'),
