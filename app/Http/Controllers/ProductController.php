@@ -262,10 +262,6 @@ class ProductController extends Controller
                 $image->move(public_path('images/products'), $imageName);
                 $imageNames[] = $imageName;
             }
-        } else {
-            // If no new images, retain existing images
-            $existingImages = json_decode($product->image, true);
-            $imageNames = $existingImages ? $existingImages : [];
         }
 
         $product->update([
