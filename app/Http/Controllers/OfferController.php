@@ -126,7 +126,15 @@ class OfferController extends Controller
                 'message' => 'Offer status updated successfully',
                 'offer' => [
                     'id' => $offer->id,
+                    'name' => $offer->name,
+                    'type' => $offer->type,
+                    'discount' => $offer->discount,
+                    'start_date' => $offer->start_date,
+                    'end_date' => $offer->end_date,
                     'status' => $offer->status,
+                    'description' => $offer->description,
+                    'button_text' => $offer->button_text,
+                    'image' => url('images/offers/' . $offer->image),
                 ]
             ], 200);
     }
