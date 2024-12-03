@@ -126,6 +126,9 @@ class ProductController extends Controller
 
         foreach($products as $product) {
             $imageUrls = json_decode($product->image, true);
+            if (!is_array($imageUrls)) {
+                $imageUrls = [];
+            }
             $imageUrls = array_map(function($imageName) {
                 return url('images/products/' . $imageName);
             }, $imageUrls);
