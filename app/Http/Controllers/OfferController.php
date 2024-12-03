@@ -275,5 +275,17 @@ class OfferController extends Controller
             'offers' => $offer
             ], 200);
     }
+     // delete all offer
+       public function AllDeleteOffer(Request $request)
+    {
+        if ($request->user()->role_id !== 1) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        Offer::query()->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'All  Offer deleted successfully',
+        ], 200);
+    }
     
 }
