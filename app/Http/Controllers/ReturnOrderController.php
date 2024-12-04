@@ -36,7 +36,8 @@ class ReturnOrderController extends Controller
             'product_id' => $request->input('product_id'),
             'return_date' => $request->input('return_date'),
             'return_status' => 'pending',
-            'price' => $request->input('price')
+            'price' => $request->input('price'),
+            'reason'=>$request->input('reason')
         ]);
         return response()->json([
             'success' => true,
@@ -51,14 +52,16 @@ class ReturnOrderController extends Controller
         $returnOrders = ReturnOrder::with('order','customer','stock','product')->get();
         $formattedReturnOrders = $returnOrders->map(function($returnOrder) {
             return [
-                   'id'=>$returnOrder->id,
+                'id'=>$returnOrder->id,
                 'order' => isset($returnOrder->order->id) ? $returnOrder->order->id : null,
                 'customer' => isset($returnOrder->customer->name) ? $returnOrder->customer->name : null,
                 'stock' => isset($returnOrder->stock->id) ? $returnOrder->stock->id : null,
                 'product' => isset($returnOrder->product->product_name) ? $returnOrder->product->product_name : null,
                 'return_date' => $returnOrder->return_date,
                 'return_status' => $returnOrder->return_status,
-                'price' => $returnOrder->price
+                'price' => $returnOrder->price,
+                'reason'=>$returnOrder->reason
+                
             ];
         });
         return response()->json([
@@ -79,7 +82,8 @@ class ReturnOrderController extends Controller
                 'product' => isset($returnOrder->product->product_name) ? $returnOrder->product->product_name : null,
                 'return_date' => $returnOrder->return_date,
                 'return_status' => $returnOrder->return_status,
-                'price' => $returnOrder->price
+                'price' => $returnOrder->price,
+                   'reason'=>$returnOrder->reason
                 ]
         ], 200);
     }
@@ -110,7 +114,8 @@ class ReturnOrderController extends Controller
             'product_id' => $request->input('product_id'),
             'return_date' => $request->input('return_date'),
             'return_status' => $request->input('return_status'),
-            'price' => $request->input('price')
+            'price' => $request->input('price'),
+            'reason'=>$request->input('reason')
         ]);
         return response()->json([
             'success' => true,
