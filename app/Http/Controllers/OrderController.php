@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Order;
+use App\Models\Stock;
 
 class OrderController extends Controller
 {
@@ -25,6 +26,21 @@ class OrderController extends Controller
             return response()->json($validateOrder->errors(), 401);
         }
 
+        $stock = Stock::find($request->input('stock_id'));
+
+          // Check if stock quantity is sufficient
+        if ($stock->qty < $request->input('qty')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Insufficient stock available'
+            ], 400);
+        }
+
+         // Deduct the ordered quantity from the stock
+    $stock->qty -= $request->input('qty');
+    $stock->save();
+
+
           // Generate a unique 6-digit invoice number
         do {
             $invoiceNumber = mt_rand(10000000, 99999999);
@@ -36,7 +52,9 @@ class OrderController extends Controller
             'total_amount' => $request->input('total_amount'),
             'order_status' => $request->input('order_status'),
             'invoice_number' => $invoiceNumber,
-            'deliveryAddress_id' => $request->input('deliveryAddress_id')
+            'deliveryAddress_id' => $request->input('deliveryAddress_id'),
+            'stock_id' =>$request->input('stock_id'),
+            'qty' => $request->input('qty')
         ]);
         return response()->json([
             'success' => true,

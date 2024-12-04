@@ -15,14 +15,17 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('deliveryAddress_id');
+            $table->unsignedBigInteger('stock_id');
             $table->string('order_date');
             $table->string('total_amount');
             $table->string('order_status');
             $table->string('invoice_number')->unique();
+            $table->integer('qty');
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('deliveryAddress_id')->references('id')->on('delivery_address')->onDelete('cascade');
+            $table->foreign('stock_id')->references('id')->on('stocks')->onDelete('cascade');
         });
     }
 
