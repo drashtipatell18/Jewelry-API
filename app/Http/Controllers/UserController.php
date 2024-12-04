@@ -202,11 +202,11 @@ class UserController extends Controller
     {
         $validateUser = Validator::make($request->all(), [
             'name' => 'required',
-            'surname' => 'required',
-            'username' => 'required|unique:users,username,' . $id,
+            // 'surname' => 'required',
+            // 'username' => 'required|unique:users,username,' . $id,
             'email' => 'required|email|unique:users,email,' . $id,
             'phone' => 'required',
-            'address' => 'required',
+            // 'address' => 'required',
         ]);
         if($validateUser->fails()){
             return response()->json($validateUser->errors(), 401);
