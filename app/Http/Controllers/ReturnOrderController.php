@@ -51,6 +51,7 @@ class ReturnOrderController extends Controller
         $returnOrders = ReturnOrder::with('order','customer','stock','product')->get();
         $formattedReturnOrders = $returnOrders->map(function($returnOrder) {
             return [
+                   'id'=>$returnOrder->id,
                 'order' => isset($returnOrder->order->id) ? $returnOrder->order->id : null,
                 'customer' => isset($returnOrder->customer->name) ? $returnOrder->customer->name : null,
                 'stock' => isset($returnOrder->stock->id) ? $returnOrder->stock->id : null,
