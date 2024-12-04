@@ -184,4 +184,14 @@ class OrderController extends Controller
             'order' => $order
         ], 200);
     }
+
+    public function invoiceOrder($id)
+    {
+        $order = Order::find($id);
+        return response()->json([
+            'success' => true,
+            'message' => 'Invoice fetched successfully',
+            'order' => $order
+        ], 200);
+    }
 }
