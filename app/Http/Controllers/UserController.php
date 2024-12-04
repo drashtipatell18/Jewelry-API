@@ -49,6 +49,7 @@ class UserController extends Controller
             'image' => $filename,
             'phone' => $request->input('phone'),
             'address' => $request->input('address'),
+            'gender'=>$request->input('gender')
         ]);
         return response()->json([
             'success' => true,
@@ -63,6 +64,7 @@ class UserController extends Controller
                 'role_id' => $user->role_id,
                 'phone' => $user->phone,
                 'address' => $user->address,
+                'gender'=>$user->gender
             ]
         ], 200);
     }
@@ -87,6 +89,7 @@ class UserController extends Controller
                     'role_id' => $user->role_id,
                     'phone' => $user->phone,
                     'address' => $user->address,
+                    'gender'=>$user->gender
                 ];
             })
         ], 200);
@@ -106,6 +109,8 @@ class UserController extends Controller
                 'email' => $user->email,
                 'image' => url('images/'.$user->image),
                 'role_id' => $user->role_id,
+                'phone'=>$user->phone,
+                'gender'=>$user->gender
             ]
         ], 200);
     }
@@ -148,6 +153,7 @@ class UserController extends Controller
             'image' => $filename,
             'phone' => $request->input('phone'),
             'address' => $request->input('address'),
+             'gender'=>$request->input('gender')
         ]);
         return response()->json([
             'success' => true,
@@ -162,6 +168,7 @@ class UserController extends Controller
                 'role_id' => $user->role_id,
                 'phone' => $user->phone,
                 'address' => $user->address,
+                'gender'=>$user->gender
             ]
         ], 200);
     }
@@ -186,6 +193,7 @@ class UserController extends Controller
                 'role_id' => $user->role_id,
                 'phone' => $user->phone,
                 'address' => $user->address,
+                'gender'=>$user->gender
             ]
         ], 200);
     }
@@ -223,6 +231,7 @@ class UserController extends Controller
             'image' => $filename,
             'phone' => $request->input('phone'),
             'address' => $request->input('address'),
+             'gender'=>$request->input('gender')
         ]);
         return response()->json([
             'success' => true,
@@ -237,6 +246,7 @@ class UserController extends Controller
                 'role_id' => $user->role_id,
                 'phone' => $user->phone,
                 'address' => $user->address,
+                'gender'=>$user->gender
             ]
         ], 200);
     }
