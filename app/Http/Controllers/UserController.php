@@ -223,14 +223,14 @@ class UserController extends Controller
         }
         $user->update([
             'name' => $request->input('name'),
-            'surname' => $request->input('surname'),
-            'username' => $request->input('username'),
+            // 'surname' => $request->input('surname'),
+            // 'username' => $request->input('username'),
             'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password')),
-            'role_id' => $request->input('role_id'),
+            // 'password' => Hash::make($request->input('password')),
+            // 'role_id' => $request->input('role_id'),
             'image' => $filename,
             'phone' => $request->input('phone'),
-            'address' => $request->input('address'),
+            // 'address' => $request->input('address'),
              'gender'=>$request->input('gender')
         ]);
         return response()->json([
