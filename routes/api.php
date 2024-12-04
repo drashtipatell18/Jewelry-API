@@ -15,6 +15,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\DeliveryAddressController;
 use App\Http\Controllers\ProductOfferController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\ReturnOrderController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -85,6 +86,18 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/order/update/{id}', [OrderController::class, 'updateOrder']);
     Route::delete('/order/delete/{id}', [OrderController::class, 'deleteOrder']);
     Route::delete('/orders/allDelete', [OrderController::class, 'AllDeleteOrder']);
+    Route::post('/order/updatestatus/{id}', [OrderController::class, 'updateStatusOrder']);
+
+    // Return Order
+    Route::post('/returnorder/create', [ReturnOrderController::class, 'createReturnOrder']);
+    Route::get('/returnorder/getall', [ReturnOrderController::class, 'getAllReturnOrder']);
+    Route::get('/returnorder/get/{id}', [ReturnOrderController::class, 'getReturnOrderById']);
+    Route::post('/returnorder/update/{id}', [ReturnOrderController::class, 'updateReturnOrder']);
+    Route::delete('/returnorder/delete/{id}', [ReturnOrderController::class, 'deleteReturnOrder']);
+    Route::delete('/returnorder/allDelete', [ReturnOrderController::class, 'AllDeleteReturnOrder']);
+    Route::post('/returnorder/updatestatus/{id}', [ReturnOrderController::class, 'updateStatusReturnOrder']);
+    Route::get('/returnorder/getaccepted', [ReturnOrderController::class, 'getAllAcceptedReturnOrder']);
+    Route::get('/returnorder/getrejected', [ReturnOrderController::class, 'getAllRejectedReturnOrder']);
 
     // Product
     Route::post('/products/create', [ProductController::class, 'createProduct']);

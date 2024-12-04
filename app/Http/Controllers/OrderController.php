@@ -19,8 +19,10 @@ class OrderController extends Controller
             'customer_id' => 'required|exists:users,id',
             'order_date'  => 'required',
             'total_amount' => 'required',
-            'order_status' => 'required',
-            'deliveryAddress_id' => 'nullable'
+            'order_status' => 'required|in:pending,delivered,completed,cancelled,transit',
+            'deliveryAddress_id' => 'nullable',
+            'stock_id' => 'required|exists:stocks,id',
+            'qty' => 'required'
         ]);
         if($validateOrder->fails()){
             return response()->json($validateOrder->errors(), 401);
@@ -37,9 +39,8 @@ class OrderController extends Controller
         }
 
          // Deduct the ordered quantity from the stock
-    $stock->qty -= $request->input('qty');
-    $stock->save();
-
+        $stock->qty -= $request->input('qty');
+        $stock->save();
 
           // Generate a unique 6-digit invoice number
         do {
@@ -93,20 +94,45 @@ class OrderController extends Controller
             'customer_id' => 'required|exists:users,id',
             'order_date'  => 'required',
             'total_amount' => 'required',
-            'order_status' => 'required',
-            'deliveryAddress_id' => 'nullable'
+            'order_status' => 'required|in:pending,delivered,completed,cancelled,transit',
+            'deliveryAddress_id' => 'nullable',
+            'stock_id' => 'required|exists:stocks,id',
+            'qty' => 'required'
         ]);
         if($validateOrder->fails()){
             return response()->json($validateOrder->errors(), 401);
         }
         $order = Order::find($id);
+
+        // Check if stock quantity is sufficient
+        $stock = Stock::find($request->input('stock_id'));
+
+        // Calculate the difference in quantity
+        $qtyDifference = $request->input('qty') - $order->qty;
+
+        // Check if stock quantity is sufficient after considering the difference
+        if ($stock->qty < $qtyDifference) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Insufficient stock available'
+            ], 400);
+        }
+
+        // Update the stock quantity
+        $stock->qty -= $qtyDifference;
+        $stock->save();
+
+        // Update the order
         $order->update([
             'customer_id' => $request->input('customer_id'),
             'order_date' => $request->input('order_date'),
             'total_amount' => $request->input('total_amount'),
             'order_status' => $request->input('order_status'),
             'deliveryAddress_id' => $request->input('deliveryAddress_id'),
+            'stock_id' => $request->input('stock_id'),
+            'qty' => $request->input('qty')
         ]);
+
         return response()->json([
             'success' => true,
             'message' => 'Order updated successfully',
@@ -134,6 +160,28 @@ class OrderController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'All Orders deleted successfully'
+        ], 200);
+    }
+
+    public function updateStatusOrder(Request $request, $id)
+    {
+        if ($request->user()->role_id !== 1) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        $validateOrder = Validator::make($request->all(), [
+            'order_status' => 'required|in:pending,delivered,completed,cancelled,transit'
+        ]);
+        if($validateOrder->fails()){
+            return response()->json($validateOrder->errors(), 401);
+        }
+        $order = Order::find($id);
+        $order->update([
+            'order_status' => $request->input('order_status')
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Order status updated successfully',
+            'order' => $order
         ], 200);
     }
 }
