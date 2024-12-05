@@ -64,15 +64,42 @@ class OrderController extends Controller
         ], 200);
     }
 
-    public function getAllOrder()
-    {
-        $orders = Order::all();
-        return response()->json([
-            'success' => true,
-            'message' => 'Orders fetched successfully',
-            'orders' => $orders
-        ], 200);
-    }
+     public function getAllOrder()
+{
+    // Fetch all orders with only the 'name' field from the customer and the entire deliveryAddress
+    $orders = Order::with(['customer', 'deliveryAddress'])->get();
+
+    // Transform the orders to include 'customer_name' as a top-level field
+    $orders = $orders->map(function ($order) {
+        //  dd($order->deliveryAddress);
+        return [
+            'id' => $order->id,
+            'customer_id' => $order->customer_id,
+            'stock_id' => $order->stock_id,
+            'order_date' => $order->order_date,
+            'qty' => $order->qty,
+            'total_amount' => $order->total_amount,
+            'invoice_number' => $order->invoice_number,
+            'order_status' => $order->order_status,
+            'created_at' => $order->created_at,
+            'updated_at' => $order->updated_at,
+            'deleted_at' => $order->deleted_at,
+            'deliveryAddress_id' => $order->deliveryAddress_id,
+            'customer_name' => $order->customer ? $order->customer->name : null,
+            'customer_email' => $order->customer ? $order->customer->email : null,
+            'customer_phone' => $order->customer ? $order->customer->phone : null,
+            'delivery_address' => $order->deliveryAddress ?$order->deliveryAddress->address :null , // Keep the delivery address as is
+            //  'delivery_addresss' => $order->deliveryAddress,
+        ];
+    });
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Orders fetched successfully',
+        'orders' => $orders
+    ], 200);
+}
+
 
     public function getOrderById(Request $request,$id)
     {
