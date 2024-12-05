@@ -215,7 +215,7 @@ class ProductController extends Controller
         ], 200);
     }
 
-    public function updateProduct($id, Request $request)
+     public function updateProduct($id, Request $request)
     {
         if ($request->user()->role_id !== 1) {
             return response()->json(
@@ -256,14 +256,23 @@ class ProductController extends Controller
         if (!$product) {
             return response()->json(['success' => false, 'message' => 'Product not found'], 404);
         }
-
         // Check if new images are uploaded
-        if ($request->hasFile('image')) {
-            $images = is_array($request->file('image')) ? $request->file('image') : [$request->file('image')];
-            foreach ($images as $image) {
-                $imageName = uniqid() . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('images/products'), $imageName);
-                $imageNames[] = $imageName;
+        if ($request->image) {
+            $images = $request->image; // Get the entire image array
+            $imageNames = []; // Initialize $imageNames
+            // Loop through the images array
+            foreach ($images as $index => $image) {
+                if (isset($image['url'])) {
+                    // If the image is a URL, keep it unchanged
+                    $imageNames[] = basename($image['url']); // Extract the filename from the URL
+                  
+                } elseif (isset($image['file'])) {
+                    // If the image is a file, process it
+                    $uploadedImage = $image['file'];
+                    $imageName = uniqid() . '.' . $uploadedImage->getClientOriginalExtension();
+                    $uploadedImage->move(public_path('images/products'), $imageName);
+                    $imageNames[] = $imageName; // Add new image name to the array
+                }
             }
         }
 
@@ -329,6 +338,7 @@ class ProductController extends Controller
             ]
         ], 200);
     }
+
 
     public function deleteProduct($id)
     {
