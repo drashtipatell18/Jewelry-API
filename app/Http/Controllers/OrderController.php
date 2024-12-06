@@ -220,7 +220,7 @@ class OrderController extends Controller
 
     public function getOrderById(Request $request,$id)
     {
-        $order = Order::with(['customer', 'deliveryAddress', 'products'])->find($id);
+        $order = Order::with(['customer:id,name,email,phone', 'deliveryAddress:id,address', 'products'])->find($id);
         $orderItems = [];
         if ($order) {
             $order->products()->each(function ($product) use (&$orderItems) {
@@ -237,12 +237,12 @@ class OrderController extends Controller
             'message' => 'Order fetched successfully',
             'order' => [
                 'id' => $order->id,
-                'customer_id' => $order->customer_id,
+                'customer' => $order->customer,
                 'order_date' => $order->order_date,
                 'total_amount' => $order->total_amount,
                 'invoice_number' => $order->invoice_number,
                 'order_status' => $order->order_status,
-                'deliveryAddress_id' => $order->deliveryAddress_id,
+                'deliveryAddress' => $order->deliveryAddress,
                 'order_items' => $orderItems
             ],
         ], 200);

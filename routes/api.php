@@ -16,6 +16,7 @@ use App\Http\Controllers\DeliveryAddressController;
 use App\Http\Controllers\ProductOfferController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\ReturnOrderController;
+use App\Http\Controllers\DashboradController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -39,6 +40,8 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/roles', [RoleController::class, 'getRole']);
     Route::post('password/change', [UserController::class, 'changePassword']);
 
+    // dashboard
+    Route::get('/dashboard', [DashboradController::class, 'dashboard']);
     // user
     Route::post('/user/create', [UserController::class, 'createUser']);
     Route::get('/user/getall', [UserController::class, 'getAllUser']);
