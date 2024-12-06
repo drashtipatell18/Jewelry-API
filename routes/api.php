@@ -88,7 +88,9 @@ Route::middleware('auth.api')->group(function () {
     Route::delete('/orders/allDelete', [OrderController::class, 'AllDeleteOrder']);
     Route::post('/order/updatestatus/{id}', [OrderController::class, 'updateStatusOrder']);
     Route::post('/order/invoice/{id}', [OrderController::class, 'invoiceOrder']);
-    
+    Route::post('/orderproduct/update/{id}', [OrderController::class, 'updateOrderProduct']);
+    Route::delete('/orderproduct/delete/{id}', [OrderController::class, 'deleteOrderProduct']);
+
     // Return Order
     Route::post('/returnorder/create', [ReturnOrderController::class, 'createReturnOrder']);
     Route::get('/returnorder/getall', [ReturnOrderController::class, 'getAllReturnOrder']);
