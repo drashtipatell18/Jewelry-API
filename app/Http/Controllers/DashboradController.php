@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\Category;
 use App\Models\Stock;
-
+use Illuminate\Support\Facades\DB;
 class DashboradController extends Controller
 {
     public function dashboard()
@@ -27,7 +26,12 @@ class DashboradController extends Controller
         $totalProducts = Product::count();
 
         // Top Category
-        $topCategory = Category::with('subcategories')->max('name');
+        $topCategory = Product::select('category_id', DB::raw('count(*) as product_count'))
+        ->groupBy('category_id')
+        ->orderBy('product_count', 'desc')
+        ->first();
+
+        $topCategoryName = $topCategory ? Category::find($topCategory->category_id)->name : null;
 
         // Fetch all reviews with customer details
         $reviews = Review::with('customer')->select('customer_id', 'description', 'rating')->get();
@@ -68,7 +72,10 @@ class DashboradController extends Controller
                 ],
                 'reviews' => $structuredReviews,
                 'stock' => $stock,
-                'top_category' => $topCategory,
+                'top_category' => [
+                    'category_name' => $topCategoryName,
+                    'product_count' => $topCategory ? $topCategory->product_count : null,
+                ],
                 'top_sales_location' => $topSalesLocation,
             ],
         ], 200);
