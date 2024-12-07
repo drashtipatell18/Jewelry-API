@@ -20,14 +20,25 @@ class CategoryController extends Controller
         if($validateCategory->fails()){
             return response()->json($validateCategory->errors(), 401);
         }
+        $imageName = null;
+        if($request->hasFile('image')){
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/categories'), $imageName);
+        }
         $category = Category::create([
             'name' => $request->input('name'),
+            'image' => $imageName,
             'status'=>'active'
         ]);
         return response()->json([
             'success' => true,
             'message' => 'Category created successfully',
-            'category' => $category
+            'category' => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'image' => $imageName ? url('images/categories/' . $imageName) : null,
+            ]
         ], 200);
     }
 
@@ -37,7 +48,13 @@ class CategoryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Categories fetched successfully',
-            'categories' => $categories
+            'categories' => $categories->map(function($category) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'image' => url('images/categories/' . $category->image),
+                ];
+            })
         ], 200);
     }
 
@@ -50,7 +67,11 @@ class CategoryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Category fetched successfully',
-            'category' => $category
+            'category' => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'image' => url('images/categories/' . $category->image),
+            ]
         ], 200);
     }
 
@@ -63,16 +84,28 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
         ]);
         $category = Category::find($id);
+        $imageName = $category->image;
+        if($request->hasFile('image')){
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/categories'), $imageName);
+        }
         if (!$category) {
             return response()->json(['success' => false, 'message' => 'Category not found'], 404);
         }
+
         $category->update([
-            'name' => $request->input('name')
+            'name' => $request->input('name'),
+            'image' => $imageName,
         ]);
         return response()->json([
             'success' => true,
             'message' => 'Category updated successfully',
-            'category' => $category
+            'category' => [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'image' => $imageName ? url('images/categories/' . $imageName) : null,
+                ]
         ], 200);
     }
 
@@ -89,7 +122,11 @@ class CategoryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Category deleted successfully',
-            'category' => $category
+            'category' => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'image' => url('images/categories/' . $category->image),
+            ]
         ], 200);
     }
 
@@ -110,7 +147,11 @@ class CategoryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Category status updated successfully',
-            'category' => $category
+            'category' => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'image' => url('images/categories/' . $category->image),
+            ]
         ], 200);
 
     }
@@ -121,7 +162,13 @@ class CategoryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Categories Active fetched successfully',
-            'categories' => $categories
+            'categories' => $categories->map(function($category) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'image' => url('images/categories/' . $category->image),
+                ];
+            })
         ], 200);
     }
 
@@ -132,7 +179,13 @@ class CategoryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Categories Inactive fetched successfully',
-            'categories' => $categories
+            'categories' => $categories->map(function($category) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'image' => url('images/categories/' . $category->image),
+                ];
+            })
         ], 200);
     }
 
