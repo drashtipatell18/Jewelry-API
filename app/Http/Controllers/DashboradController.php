@@ -29,6 +29,7 @@ class DashboradController extends Controller
         $topCategory = Product::select('category_id', DB::raw('count(*) as product_count'))
         ->groupBy('category_id')
         ->orderBy('product_count', 'desc')
+        ->take(5) // Limit to 5 results
         ->first();
 
         $topCategoryName = $topCategory ? Category::find($topCategory->category_id)->name : null;
@@ -37,17 +38,23 @@ class DashboradController extends Controller
         $reviews = Review::with('customer')->select('customer_id', 'description', 'rating')->get();
 
         // Structure reviews by customer, limiting to one review per customer
-        $structuredReviews = $reviews->groupBy('customer_id')->map(function ($group) {
-            // $reviews = $group->take(3);
-            return $group->map(function ($review) {
-                return [
-                    'customer_name' => $review->customer->name,
-                    'description' => $review->description,
-                    'rating' => $review->rating,
-                ];
-            });
-        })->values();
-
+        // $structuredReviews = $reviews->groupBy('customer_id')->map(function ($group) {
+        //     // $reviews = $group->take(3);
+        //     return $group->map(function ($review) {
+        //         return [
+        //             'customer_name' => $review->customer->name,
+        //             'description' => $review->description,
+        //             'rating' => $review->rating,
+        //         ];
+        //     });
+        // })->values();
+$structuredReviews = $reviews->flatten()->map(function ($review) {
+    return [
+        'customer_name' => $review->customer->name,
+        'description' => $review->description,
+        'rating' => $review->rating,
+    ];
+})->values();
         // Fetch all products with their stock quantity
         $productsWithStock = Product::all();
 
