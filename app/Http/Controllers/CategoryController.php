@@ -37,6 +37,7 @@ class CategoryController extends Controller
             'category' => [
                 'id' => $category->id,
                 'name' => $category->name,
+                'status' => $category->status,
                 'image' => $imageName ? url('images/categories/' . $imageName) : null,
             ]
         ], 200);
@@ -52,6 +53,7 @@ class CategoryController extends Controller
                 return [
                     'id' => $category->id,
                     'name' => $category->name,
+                    'status' => $category->status,
                     'image' => url('images/categories/' . $category->image),
                 ];
             })
@@ -70,6 +72,7 @@ class CategoryController extends Controller
             'category' => [
                 'id' => $category->id,
                 'name' => $category->name,
+                'status' => $category->status,
                 'image' => url('images/categories/' . $category->image),
             ]
         ], 200);
@@ -104,6 +107,7 @@ class CategoryController extends Controller
             'category' => [
                     'id' => $category->id,
                     'name' => $category->name,
+                    'status' => $category->status,
                     'image' => $imageName ? url('images/categories/' . $imageName) : null,
                 ]
         ], 200);
@@ -125,6 +129,7 @@ class CategoryController extends Controller
             'category' => [
                 'id' => $category->id,
                 'name' => $category->name,
+                'status' => $category->status,
                 'image' => url('images/categories/' . $category->image),
             ]
         ], 200);
@@ -150,6 +155,7 @@ class CategoryController extends Controller
             'category' => [
                 'id' => $category->id,
                 'name' => $category->name,
+                'status' => $category->status,
                 'image' => url('images/categories/' . $category->image),
             ]
         ], 200);
@@ -166,6 +172,7 @@ class CategoryController extends Controller
                 return [
                     'id' => $category->id,
                     'name' => $category->name,
+                    'status' => $category->status,
                     'image' => url('images/categories/' . $category->image),
                 ];
             })
@@ -183,6 +190,7 @@ class CategoryController extends Controller
                 return [
                     'id' => $category->id,
                     'name' => $category->name,
+                    'status' => $category->status,
                     'image' => url('images/categories/' . $category->image),
                 ];
             })
