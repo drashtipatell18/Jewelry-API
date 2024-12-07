@@ -48,13 +48,15 @@ class DashboradController extends Controller
         //         ];
         //     });
         // })->values();
-$structuredReviews = $reviews->flatten()->map(function ($review) {
+     $structuredReviews = $reviews->flatten()->map(function ($review) {
     return [
         'customer_name' => $review->customer->name,
         'description' => $review->description,
         'rating' => $review->rating,
+       'image' => 'https://shrekrishnaastrologer.com/public/images' . $review->customer->image
     ];
 })->values();
+
         // Fetch all products with their stock quantity
         $productsWithStock = Product::all();
 
