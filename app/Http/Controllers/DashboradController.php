@@ -61,7 +61,41 @@ class DashboradController extends Controller
         $productsWithStock = Product::all();
 
         // Calculate total stock quantity
-        $stock = Stock::all();
+         $stock = Stock::with(['category', 'subCategory', 'product'])->get();
+
+// Transform stock data to include related details
+        $stockData = $stock->map(function ($item) {
+    // Ensure product exists before accessing its properties
+    if ($item->product) {
+        // Handle product images if they are stored as an array
+        $imageUrls = json_decode($item->product->image, true);
+        if (!is_array($imageUrls)) {
+            $imageUrls = [];
+        }
+
+        // Get the first image URL if available
+        $firstImageUrl = !empty($imageUrls) ? url('images/products/' . $imageUrls[0]) : null;
+    } else {
+        $firstImageUrl = null; // If no product, set product image to null
+    }
+
+    return [
+        'id' => $item->id,
+        'category_id' => $item->category_id,
+        'category_name' => $item->category->name ?? null,
+        'sub_category_id' => $item->sub_category_id,
+        'sub_category_name' => $item->subCategory->name ?? null,
+        'product_id' => $item->product_id,
+        'product_name' => $item->product->name ?? null,
+        'product_image' => $firstImageUrl, // return only the first image URL or null
+        'date' => $item->date,
+        'status' => $item->status,
+        'qty' => $item->qty,
+        'created_at' => $item->created_at,
+        'updated_at' => $item->updated_at,
+        'deleted_at' => $item->deleted_at,
+    ];
+});
 
         // Fetch top sales location
         $topSalesLocation = Order::with('deliveryAddress')->get()->pluck('deliveryAddress.address')->mode();
@@ -80,7 +114,7 @@ class DashboradController extends Controller
                     'product_with_max_qty' => $productWithMaxQty ? $productWithMaxQty->product_name : null,
                 ],
                 'reviews' => $structuredReviews,
-                'stock' => $stock,
+                'stock' => $stockData,
                 'top_category' => [
                     'category_name' => $topCategoryName,
                     'product_count' => $topCategory ? $topCategory->product_count : null,
