@@ -53,7 +53,7 @@ class DashboradController extends Controller
         'customer_name' => $review->customer->name,
         'description' => $review->description,
         'rating' => $review->rating,
-       'image' => 'https://shrekrishnaastrologer.com/public/images' . $review->customer->image
+       'image' => 'https://shreekrishnaastrology.com/public/images/' . $review->customer->image
     ];
 })->values();
 
