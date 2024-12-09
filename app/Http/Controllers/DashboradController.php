@@ -68,13 +68,22 @@ class DashboradController extends Controller
 
         // Calculate total stock quantity
         // $stock = Stock::all();
-        $stock = Stock::with(['category', 'subCategory', 'product'])->get();
+        // $stock = Stock::with(['category', 'subCategory', 'product'])->get();
+        $stock = Stock::with([
+    'category' => function ($query) {
+        $query->withTrashed(); // Include soft-deleted categories
+    },
+    'subCategory' => function ($query) {
+        $query->withTrashed(); // Include soft-deleted subcategories
+    },
+    'product' => function ($query) {
+        $query->withTrashed(); // Include soft-deleted products
+    }
+])->get();
 
 // Transform stock data to include related details
         $stockData = $stock->map(function ($item) {
-    // Ensure product exists before accessing its properties
     if ($item->product) {
-        // Handle product images if they are stored as an array
         $imageUrls = json_decode($item->product->image, true);
         if (!is_array($imageUrls)) {
             $imageUrls = [];
@@ -85,24 +94,23 @@ class DashboradController extends Controller
     } else {
         $firstImageUrl = null; // If no product, set product image to null
     }
-// dd($item->subCategory);
-    return [
-        'id' => $item->id,
-        'category_id' => $item->category_id,
-        'category_name' => $item->category->name ?? null,
-        'sub_category_id' => $item->sub_category_id,
-        'sub_category_name' => $item->subCategory->name ?? null,
-        'product_id' => $item->product_id,
-        'product_name' => $item->product->product_name ?? null,
-        'product_image' => $firstImageUrl, // return only the first image URL or null
-        'date' => $item->date,
-        'status' => $item->status,
-        'qty' => $item->qty,
-        'created_at' => $item->created_at,
-        'updated_at' => $item->updated_at,
-        'deleted_at' => $item->deleted_at,
-    ];
-});
+            return [
+                'id' => $item->id,
+                'category_id' => $item->category_id,
+                'category_name' => $item->category->name ?? null,
+                'sub_category_id' => $item->sub_category_id,
+                'sub_category_name' => $item->subCategory->name ?? null,
+                'product_id' => $item->product_id,
+                'product_name' => $item->product->product_name ?? null,
+                'product_image' => $firstImageUrl, // return only the first image URL or null
+                'date' => $item->date,
+                'status' => $item->status,
+                'qty' => $item->qty,
+                'created_at' => $item->created_at,
+                'updated_at' => $item->updated_at,
+                'deleted_at' => $item->deleted_at,
+            ];
+        });
 
 
 

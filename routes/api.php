@@ -17,6 +17,8 @@ use App\Http\Controllers\ProductOfferController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\ReturnOrderController;
 use App\Http\Controllers\DashboradController;
+use App\Http\Controllers\WishListController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -116,6 +118,13 @@ Route::middleware('auth.api')->group(function () {
     Route::delete('/products/allDelete', [ProductController::class, 'AllDeleteProduct']);
     Route::post('/products/filter', [ProductController::class, 'filterProducts']);
     Route::post('/products/updatestatus/{id}', [ProductController::class, 'updateStatusProduct']);
+
+    // Wish List
+    Route::get('/wishlists/getall', [WishListController::class, 'getAllWishLists']);
+    Route::post('/wishlists/create', [WishListController::class, 'createWishList']);
+    Route::get('/wishlists/get/{id}', [WishListController::class, 'getWishListById']);
+    Route::post('/wishlist/update/{id}', [WishListController::class, 'wishlistUpdate']);
+    Route::delete('/wishlists/delete/{id}', [WishListController::class, 'deleteWishList']);
 
     // Stock
     Route::post('/stocks/create', [StockController::class, 'createStock']);
