@@ -170,6 +170,16 @@ class ProductController extends Controller
         ], 200);
     }
 
+    public function activeProduct()
+    {
+        $products = Product::where('status', 'active')->get();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Products active successfully',
+            'data' => $products
+        ], 200);
+    }
+
     public function getProductById($id)
     {
         $product = Product::find($id);
@@ -266,7 +276,7 @@ class ProductController extends Controller
                 if (isset($image['url'])) {
                     // If the image is a URL, keep it unchanged
                     $imageNames[] = basename($image['url']); // Extract the filename from the URL
-                  
+
                 } elseif (isset($image['file'])) {
                     // If the image is a file, process it
                     $uploadedImage = $image['file'];

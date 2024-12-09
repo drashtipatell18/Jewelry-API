@@ -38,6 +38,9 @@ Route::post('password/email', [UserController::class, 'sendResetLinkEmail']);
 Route::post('password/otp', [UserController::class, 'sendOTP']);
 Route::post('password/reset/{otp}', [UserController::class, 'postReset']);
 Route::post('/user/create', [UserController::class, 'createUser']);
+Route::get('/categories/getallactive', [CategoryController::class, 'getAllActiveCategory']);
+Route::get('/subcategories/getallactive', [SubCategoryController::class, 'getAllActiveSubCategory']);
+Route::get('/products/getallactive', [ProductController::class, 'activeProduct']);
 
 // auth
 Route::middleware('auth.api')->group(function () {
@@ -64,7 +67,6 @@ Route::middleware('auth.api')->group(function () {
     Route::delete('/categories/delete/{id}', [CategoryController::class, 'deleteCategory']);
     Route::delete('/categories/allDelete', [CategoryController::class, 'AllDeleteCategory']);
     Route::post('/categories/updatestatus/{id}', [CategoryController::class, 'updateStatusCategory']);
-    Route::get('/categories/getallactive', [CategoryController::class, 'getAllActiveCategory']);
     Route::get('/categories/getallinactive', [CategoryController::class, 'getAllInactiveCategory']);
 
     // SubCategory
@@ -76,7 +78,6 @@ Route::middleware('auth.api')->group(function () {
     Route::delete('/subcategories/delete/{id}', [SubCategoryController::class, 'deleteSubCategory']);
     Route::delete('/subcategories/allDelete', [SubCategoryController::class, 'AllDeleteSubCategory']);
     Route::post('/subcategories/updatestatus/{id}', [SubCategoryController::class, 'updateStatusSubCategory']);
-    Route::get('/subcategories/getallactive', [SubCategoryController::class, 'getAllActiveSubCategory']);
     Route::get('/subcategories/getallinactive', [SubCategoryController::class, 'getAllInactiveSubCategory']);
 
     // Size
