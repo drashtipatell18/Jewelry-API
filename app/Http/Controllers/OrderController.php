@@ -36,7 +36,8 @@ class OrderController extends Controller
 
         // Process each product in the order
         foreach ($request->input('products') as $productData) {
-            $stock = Stock::find($productData['product_id']);
+            // $stock = Stock::find($productData['product_id']);
+            $stock = Stock::where('product_id', $productData['product_id'])->first();
             $product = Product::find($productData['product_id']);
             // Check if stock quantity is sufficient
             if ($stock->qty < $productData['qty']) {
