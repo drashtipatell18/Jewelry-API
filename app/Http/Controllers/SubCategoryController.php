@@ -191,7 +191,16 @@ class SubCategoryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'SubCategories Active fetched successfully',
-            'subCategories' => $subCategories
+            'subCategories' => $subCategories->map(function($subCategory) {
+                return [
+                    'id' => $subCategory->id,
+                    'status' => $subCategory->status,
+                    'name' => isset($subCategory->name)? $subCategory->name :"",
+                    'category_name' => isset($subCategory->category->name) ?$subCategory->category->name:"",
+                    'category_id' => isset($subCategory->category->id)?$subCategory->category->id:"",
+                    'image' => url('images/subcategories/' . $subCategory->image), // Return full URL here
+                ];
+            }),
         ], 200);
     }
 
@@ -201,7 +210,16 @@ class SubCategoryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'SubCategories Inactive fetched successfully',
-            'subCategories' => $subCategories
+            'subCategories' => $subCategories->map(function($subCategory) {
+                return [
+                    'id' => $subCategory->id,
+                    'status' => $subCategory->status,
+                    'name' => isset($subCategory->name)? $subCategory->name :"",
+                    'category_name' => isset($subCategory->category->name) ?$subCategory->category->name:"",
+                    'category_id' => isset($subCategory->category->id)?$subCategory->category->id:"",
+                    'image' => url('images/subcategories/' . $subCategory->image), // Return full URL here
+                ];
+            }),
         ], 200);
     }
 

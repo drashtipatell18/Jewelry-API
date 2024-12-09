@@ -173,12 +173,54 @@ class ProductController extends Controller
     public function activeProduct()
     {
         $products = Product::where('status', 'active')->get();
+
+        $productData = $products->map(function ($product) {
+            $imageUrls = json_decode($product->image, true);
+
+            // Ensure $imageUrls is an array
+            if (!is_array($imageUrls)) {
+                $imageUrls = [];
+            }
+
+            // Generate full image URLs
+            $imageUrls = array_map(function ($imageName) {
+                return url('images/products/' . $imageName);
+            }, $imageUrls);
+
+            return [
+                'id' => $product->id,
+                'status' => $product->status,
+                'product_name' => $product->product_name,
+                'category_name' => $product->category ? $product->category->name : null,
+                'sub_category_name' => $product->subCategory ? $product->subCategory->name : null,
+                'metal_color' => $product->metal_color,
+                'metal' => $product->metal,
+                'diamond_color' => $product->diamond_color,
+                'diamond_quality' => json_decode($product->diamond_quality),
+                'clarity' => $product->clarity,
+                'size_name' => $product->size_name,
+                'size_id' => $product->size_id,
+                'weight' => $product->weight,
+                'no_of_diamonds' => $product->no_of_diamonds,
+                'diamond_setting' => json_decode($product->diamond_setting),
+                'diamond_shape' => $product->diamond_shape,
+                'collection' => $product->collection,
+                'gender' => $product->gender,
+                'description' => $product->description,
+                'qty' => $product->qty,
+                'price' => $product->price,
+                'discount' => $product->discount,
+                'images' => $imageUrls,
+            ];
+        });
+
         return response()->json([
             'status' => 'success',
-            'message' => 'Products active successfully',
-            'data' => $products
+            'message' => 'Active products retrieved successfully',
+            'data' => $productData,
         ], 200);
     }
+
 
     public function getProductById($id)
     {
