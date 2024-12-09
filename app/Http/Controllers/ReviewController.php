@@ -75,7 +75,8 @@ class ReviewController extends Controller
 // }
 public function getAllReviews()
 {
-    $reviews = Review::with(['customer', 'product'])->get(); // Eager load customer and product relationships
+     $reviews = Review::with(['customer' => function ($query) {$query->withTrashed(); },
+                             'product' => function ($query) {$query->withTrashed();},])->get();
 
     $response = $reviews->map(function ($review) {
         $productImages = [];
