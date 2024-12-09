@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('customer_id');
             $table->text('address');
+            $table->string('pincode');
+            $table->string('city');
+            $table->string('state');
             $table->string('status')->default('active');
             $table->timestamps();
             $table->softDeletes();

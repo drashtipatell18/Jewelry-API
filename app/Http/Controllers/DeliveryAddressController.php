@@ -16,16 +16,22 @@ class DeliveryAddressController extends Controller
 
         $validateAddress = Validator::make($request->all(), [
             'customer_id' => 'required|exists:users,id',
-            'address'  => 'nullable',
+            'address'  => 'required',
+            'pincode'  => 'required',
+            'city'  => 'required',
+            'state'  => 'required',
             'status'   => 'nullable'
         ]);
         if($validateAddress->fails()){
             return response()->json($validateAddress->errors(), 401);
         }
-       
+
         $deliveryAddress = DeliveryAddress::create([
             'customer_id' => $request->input('customer_id'),
             'address' => $request->input('address'),
+            'pincode' => $request->input('pincode'),
+            'city' => $request->input('city'),
+            'state' => $request->input('state'),
             'status' => $request->input('status')
         ]);
         return response()->json([
@@ -60,7 +66,10 @@ class DeliveryAddressController extends Controller
         }
         $validateAddress = Validator::make($request->all(), [
             'customer_id' => 'required|exists:users,id',
-            'address'  => 'nullable',
+            'address'  => 'required',
+            'pincode'  => 'required',
+            'city'  => 'required',
+            'state'  => 'required',
             'status'   => 'nullable'
         ]);
         if($validateAddress->fails()){
@@ -70,6 +79,9 @@ class DeliveryAddressController extends Controller
         $deliveryAddress->update([
             'customer_id' => $request->input('customer_id'),
             'address' => $request->input('address'),
+            'pincode' => $request->input('pincode'),
+            'city' => $request->input('city'),
+            'state' => $request->input('state'),
             'status' => $request->input('status')
         ]);
         return response()->json([
@@ -86,7 +98,7 @@ class DeliveryAddressController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Delivery Address deleted successfully',
-            'deliveryAddres' => $deliveryAddress 
+            'deliveryAddres' => $deliveryAddress
         ], 200);
     }
 }
