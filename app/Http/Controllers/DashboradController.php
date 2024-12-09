@@ -69,17 +69,17 @@ class DashboradController extends Controller
         // Calculate total stock quantity
         // $stock = Stock::all();
         // $stock = Stock::with(['category', 'subCategory', 'product'])->get();
-        $stock = Stock::with([
-    'category' => function ($query) {
-        $query->withTrashed(); // Include soft-deleted categories
-    },
-    'subCategory' => function ($query) {
-        $query->withTrashed(); // Include soft-deleted subcategories
-    },
-    'product' => function ($query) {
-        $query->withTrashed(); // Include soft-deleted products
-    }
-])->get();
+            $stock = Stock::with([
+                'category' => function ($query) {
+                    $query->withTrashed(); // Include soft-deleted categories
+                },
+                'subCategory' => function ($query) {
+                    $query->withTrashed(); // Include soft-deleted subcategories
+                },
+                'product' => function ($query) {
+                    $query->withTrashed(); // Include soft-deleted products
+                }
+        ])->get();
 
 // Transform stock data to include related details
         $stockData = $stock->map(function ($item) {
@@ -120,26 +120,29 @@ class DashboradController extends Controller
 
         // Get product name with max quantity
         $productWithMaxQty = Product::orderBy('qty', 'desc')->first();
-
+        
+        // Top product Code
+        
         $topProducts = DB::table('order_products')
         ->select('product_id', DB::raw('SUM(qty) as total_qty'))
         ->groupBy('product_id')
         ->orderBy('total_qty', 'desc')
         ->take(5)
         ->get();
-
+        
         $totalSalesQty = DB::table('order_products')->sum('qty');
         $productStockData = Stock::all()->groupBy('product_id')->map(function ($items) {
             return $items->sum('qty'); // Sum up the stock quantities for each product
         });
         $topProductsData = $topProducts->map(function ($product) use ($totalSalesQty, $productStockData) {
-            $productDetails = Product::find($product->product_id);
+            $productDetails = Product::withTrashed()->find($product->product_id);
             $stockQty = $productStockData[$product->product_id] ?? 0; // Get stock quantity or default to 0
         
             // Calculate percentage of sales relative to available stock
             $salesPercentage = $stockQty > 0 ? round(($product->total_qty / $stockQty) * 100, 2) : 0;
         
             return [
+                'product_id'=>$productDetails->id,
                 'product_name' => $productDetails->product_name ?? 'Unknown Product',
                 'total_qty_sold' => $product->total_qty,
                 'stock_qty' => $stockQty, // Include the stock quantity
