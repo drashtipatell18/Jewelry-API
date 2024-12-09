@@ -19,6 +19,7 @@ use App\Http\Controllers\ReturnOrderController;
 use App\Http\Controllers\DashboradController;
 use App\Http\Controllers\WishListController;
 use App\Http\Controllers\LeaveUSMeassageController;
+use App\Http\Controllers\ReasonCancellationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -191,5 +192,13 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/deliveryAddress/get/{id}', [DeliveryAddressController::class, 'getDeliveryAddressById']);
     Route::post('/deliveryAddress/update/{id}', [DeliveryAddressController::class, 'updateDeliveryAddress']);
     Route::delete('/deliveryAddress/delete/{id}', [DeliveryAddressController::class, 'deleteDeliveryAddress']);
+
+     // Reason For Cancellation
+     Route::post('/reasonCancellation/create', [ReasonCancellationController::class, 'createReasonCancellation']);
+     Route::get('/reasonCancellation/getall', [ReasonCancellationController::class, 'getAllReasonCancellation']);
+     Route::get('/reasonCancellation/get/{id}', [ReasonCancellationController::class, 'getReasonCancellationById']);
+     Route::post('/reasonCancellation/update/{id}', [ReasonCancellationController::class, 'updateReasonCancellation']);
+     Route::delete('/reasonCancellation/delete/{id}', [ReasonCancellationController::class, 'deleteReasonCancellation']);
+
 
 });
