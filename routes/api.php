@@ -21,6 +21,7 @@ use App\Http\Controllers\WishListController;
 use App\Http\Controllers\LeaveUSMeassageController;
 use App\Http\Controllers\ReasonCancellationController;
 use App\Http\Controllers\FAQController;
+use App\Http\Controllers\SubFAQController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -141,6 +142,14 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/wishlist/update/{id}', [WishListController::class, 'wishlistUpdate']);
     Route::delete('/wishlists/delete/{id}', [WishListController::class, 'deleteWishList']);
 
+    // Sub FAQ
+    Route::post('/subfaqs/create', [SubFAQController::class, 'createSubFAQ']);
+    Route::get('/subfaqs/getall', [SubFAQController::class, 'getAllSubFAQ']);
+    Route::get('/subfaqs/get/{id}', [SubFAQController::class, 'getSubFAQById']);
+    Route::post('/subfaqs/update/{id}', [SubFAQController::class, 'updateSubFAQ']);
+    Route::delete('/subfaqs/delete/{id}', [SubFAQController::class, 'deleteSubFAQ']);
+    Route::delete('/subfaqs/allDelete', [SubFAQController::class, 'AllDeleteSubFAQ']);
+    
     // Stock
     Route::post('/stocks/create', [StockController::class, 'createStock']);
     Route::get('/stocks/getall', [StockController::class, 'getAllStocks']);
