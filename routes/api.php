@@ -33,6 +33,8 @@ Route::post('/user/updateprofile/{id}', [UserController::class, 'updateProfile']
 Route::post('password/email', [UserController::class, 'sendResetLinkEmail']);
 Route::post('password/otp', [UserController::class, 'sendOTP']);
 Route::post('password/reset/{otp}', [UserController::class, 'postReset']);
+Route::post('/user/create', [UserController::class, 'createUser']);
+
 // auth
 Route::middleware('auth.api')->group(function () {
 

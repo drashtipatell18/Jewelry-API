@@ -26,13 +26,19 @@ class DashboradController extends Controller
         $totalProducts = Product::count();
 
         // Top Category
-        $topCategory = Product::select('category_id', DB::raw('count(*) as product_count'))
+        $topCategories = Product::select('category_id', DB::raw('count(*) as product_count'))
         ->groupBy('category_id')
         ->orderBy('product_count', 'desc')
-        ->take(5) // Limit to 5 results
-        ->first();
+          ->take(5) // Limit to 5 results
+        ->get();
 
-        $topCategoryName = $topCategory ? Category::find($topCategory->category_id)->name : null;
+        // Update to structure top categories and counts into a single array
+        $topCategoriesData = $topCategories->map(function ($category) {
+            return [
+                'category_name' => Category::find($category->category_id)->name ?? null,
+                'product_count' => $category->product_count,
+            ];
+        })->toArray();
 
         // Fetch all reviews with customer details
         $reviews = Review::with('customer')->select('customer_id', 'description', 'rating')->get();
@@ -48,20 +54,21 @@ class DashboradController extends Controller
         //         ];
         //     });
         // })->values();
-     $structuredReviews = $reviews->flatten()->map(function ($review) {
-    return [
-        'customer_name' => $review->customer->name,
-        'description' => $review->description,
-        'rating' => $review->rating,
-       'image' => 'https://shreekrishnaastrology.com/public/images/' . $review->customer->image
-    ];
-})->values();
+        $structuredReviews = $reviews->flatten()->map(function ($review) {
+            return [
+                'customer_name' => $review->customer->name,
+                'description' => $review->description,
+                'rating' => $review->rating,
+                'image' => 'https://shreekrishnaastrology.com/public/images/' . $review->customer->image
+            ];
+        })->values();
 
         // Fetch all products with their stock quantity
         $productsWithStock = Product::all();
 
         // Calculate total stock quantity
-         $stock = Stock::with(['category', 'subCategory', 'product'])->get();
+        // $stock = Stock::all();
+        $stock = Stock::with(['category', 'subCategory', 'product'])->get();
 
 // Transform stock data to include related details
         $stockData = $stock->map(function ($item) {
@@ -78,7 +85,7 @@ class DashboradController extends Controller
     } else {
         $firstImageUrl = null; // If no product, set product image to null
     }
-
+// dd($item->subCategory);
     return [
         'id' => $item->id,
         'category_id' => $item->category_id,
@@ -86,7 +93,7 @@ class DashboradController extends Controller
         'sub_category_id' => $item->sub_category_id,
         'sub_category_name' => $item->subCategory->name ?? null,
         'product_id' => $item->product_id,
-        'product_name' => $item->product->name ?? null,
+        'product_name' => $item->product->product_name ?? null,
         'product_image' => $firstImageUrl, // return only the first image URL or null
         'date' => $item->date,
         'status' => $item->status,
@@ -96,6 +103,9 @@ class DashboradController extends Controller
         'deleted_at' => $item->deleted_at,
     ];
 });
+
+
+
 
         // Fetch top sales location
         $topSalesLocation = Order::with('deliveryAddress')->get()->pluck('deliveryAddress.address')->mode();
@@ -115,10 +125,7 @@ class DashboradController extends Controller
                 ],
                 'reviews' => $structuredReviews,
                 'stock' => $stockData,
-                'top_category' => [
-                    'category_name' => $topCategoryName,
-                    'product_count' => $topCategory ? $topCategory->product_count : null,
-                ],
+                'top_category' => $topCategoriesData,
                 'top_sales_location' => $topSalesLocation,
             ],
         ], 200);

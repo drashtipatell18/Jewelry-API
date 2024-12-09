@@ -22,33 +22,23 @@ class UserController extends Controller
 
         $validateUser = Validator::make($request->all(), [
             'name' => 'required',
-            'surname' => 'required',
-            'username' => 'required|unique:users,username',
+            'dob'  =>  'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
             'phone' => 'required',
-            'address' => 'required',
             'role_id' => 'required|exists:roles,id',
         ]);
         if($validateUser->fails()){
             return response()->json($validateUser->errors(), 401);
         }
-        $filename = '';
-        if($request->hasFile('image')){
-            $image = $request->file('image');
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images'), $filename);
-        }
         $user = User::create([
             'name' => $request->input('name'),
-            'surname' => $request->input('surname'),
-            'username' => $request->input('username'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
             'role_id' => $request->input('role_id'),
             'image' => $filename,
             'phone' => $request->input('phone'),
-            'address' => $request->input('address'),
+            'dob' => $request->input('dob'),
             'gender'=>$request->input('gender')
         ]);
         return response()->json([
@@ -57,13 +47,10 @@ class UserController extends Controller
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
-                'surname' => $user->surname,
-                'username' => $user->username,
                 'email' => $user->email,
-                'image' => url('images/'.$filename),
                 'role_id' => $user->role_id,
                 'phone' => $user->phone,
-                'address' => $user->address,
+                'dob' => $user->dob,
                 'gender'=>$user->gender
             ]
         ], 200);
@@ -82,13 +69,10 @@ class UserController extends Controller
                 return [
                     'id' => $user->id,
                     'name' => $user->name,
-                    'surname' => $user->surname,
-                    'username' => $user->username,
                     'email' => $user->email,
-                    'image' => url('images/'.$user->image),
                     'role_id' => $user->role_id,
                     'phone' => $user->phone,
-                    'address' => $user->address,
+                    'dob' => $user->dob,
                     'gender'=>$user->gender
                 ];
             })
@@ -104,13 +88,11 @@ class UserController extends Controller
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
-                'surname' => $user->surname,
-                'username' => $user->username,
                 'email' => $user->email,
-                'image' => url('images/'.$user->image),
                 'role_id' => $user->role_id,
                 'phone'=>$user->phone,
-                'gender'=>$user->gender
+                'gender'=>$user->gender,
+                'dob'=> $user->dob
             ]
         ], 200);
     }
@@ -122,12 +104,10 @@ class UserController extends Controller
         }
         $validateUser = Validator::make($request->all(), [
             'name' => 'required',
-            'surname' => 'required',
-            'username' => 'required|unique:users,username,' . $id,
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'required',
             'phone' => 'required',
-            'address' => 'required',
+            'dob' => 'required',
             'role_id' => 'required|exists:roles,id',
         ]);
         if($validateUser->fails()){
@@ -137,23 +117,15 @@ class UserController extends Controller
         if (is_null($user)) {
             return response()->json(['message' => 'User not found'], 404);
         }
-        $filename = $user->image;
-        $image = $request->file('image');
-        if($image){
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images'), $filename);
-        }
+
         $user->update([
             'name' => $request->input('name'),
-            'surname' => $request->input('surname'),
-            'username' => $request->input('username'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
             'role_id' => $request->input('role_id'),
-            'image' => $filename,
             'phone' => $request->input('phone'),
-            'address' => $request->input('address'),
-             'gender'=>$request->input('gender')
+            'dob' => $request->input('dob'),
+            'gender'=>$request->input('gender')
         ]);
         return response()->json([
             'success' => true,
@@ -161,13 +133,10 @@ class UserController extends Controller
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
-                'surname' => $user->surname,
-                'username' => $user->username,
                 'email' => $user->email,
-                'image' => url('images/'.$filename),
                 'role_id' => $user->role_id,
                 'phone' => $user->phone,
-                'address' => $user->address,
+                'dob' => $user->dob,
                 'gender'=>$user->gender
             ]
         ], 200);
@@ -186,13 +155,10 @@ class UserController extends Controller
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
-                'surname' => $user->surname,
-                'username' => $user->username,
                 'email' => $user->email,
-                'image' => url('images/'.$user->image),
                 'role_id' => $user->role_id,
                 'phone' => $user->phone,
-                'address' => $user->address,
+                'dob' => $user->dob,
                 'gender'=>$user->gender
             ]
         ], 200);
@@ -202,11 +168,9 @@ class UserController extends Controller
     {
         $validateUser = Validator::make($request->all(), [
             'name' => 'required',
-            // 'surname' => 'required',
-            // 'username' => 'required|unique:users,username,' . $id,
+            'dob' => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
             'phone' => 'required',
-            // 'address' => 'required',
         ]);
         if($validateUser->fails()){
             return response()->json($validateUser->errors(), 401);
@@ -223,14 +187,12 @@ class UserController extends Controller
         }
         $user->update([
             'name' => $request->input('name'),
-            // 'surname' => $request->input('surname'),
-            // 'username' => $request->input('username'),
             'email' => $request->input('email'),
-            // 'password' => Hash::make($request->input('password')),
-            // 'role_id' => $request->input('role_id'),
+            'password' => Hash::make($request->input('password')),
+            'role_id' => $request->input('role_id'),
             'image' => $filename,
             'phone' => $request->input('phone'),
-            // 'address' => $request->input('address'),
+            'dob' => $request->input('dob'),
              'gender'=>$request->input('gender')
         ]);
         return response()->json([
@@ -239,13 +201,10 @@ class UserController extends Controller
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
-                'surname' => $user->surname,
-                'username' => $user->username,
                 'email' => $user->email,
-                'image' => url('images/'.$filename),
                 'role_id' => $user->role_id,
                 'phone' => $user->phone,
-                'address' => $user->address,
+                'dob' => $user->dob,
                 'gender'=>$user->gender
             ]
         ], 200);
