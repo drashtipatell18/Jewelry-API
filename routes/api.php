@@ -20,7 +20,7 @@ use App\Http\Controllers\DashboradController;
 use App\Http\Controllers\WishListController;
 use App\Http\Controllers\LeaveUSMeassageController;
 use App\Http\Controllers\ReasonCancellationController;
-
+use App\Http\Controllers\FAQController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -115,6 +115,14 @@ Route::middleware('auth.api')->group(function () {
     // Leave US Meassage
 
     Route::post('/leaveusmeassage/create', [LeaveUSMeassageController::class, 'createLeaveUSMeassage']);
+
+    // FAQ
+    Route::post('/faqs/create', [FAQController::class, 'createFAQ']);
+    Route::get('/faqs/getall', [FAQController::class, 'getAllFAQ']);
+    Route::get('/faqs/get/{id}', [FAQController::class, 'getFAQById']);
+    Route::post('/faqs/update/{id}', [FAQController::class, 'updateFAQ']);
+    Route::delete('/faqs/delete/{id}', [FAQController::class, 'deleteFAQ']);
+    Route::delete('/faqs/allDelete', [FAQController::class, 'AllDeleteFAQ']);
 
     // Product
     Route::post('/products/create', [ProductController::class, 'createProduct']);
