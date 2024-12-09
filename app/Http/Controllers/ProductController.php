@@ -121,7 +121,8 @@ class ProductController extends Controller
 
     public function getAllProducts()
     {
-        $products = Product::with(['category', 'subCategory'])->get();
+         $products = Product::with(['category' => function ($query) {$query->withTrashed(); },
+                                    'subCategory' => function ($query) {$query->withTrashed(); },])->get();
         $productData = [];
 
         foreach($products as $product) {
