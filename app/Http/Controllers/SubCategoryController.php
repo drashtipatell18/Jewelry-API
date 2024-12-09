@@ -33,6 +33,7 @@ class SubCategoryController extends Controller
             'name' => $request->input('name'),
             'category_id' => $request->input('category_id'),
             'image' => $imageName,
+            'status'=>'active'
         ]);
         return response()->json([
             'success' => true,
@@ -43,22 +44,26 @@ class SubCategoryController extends Controller
                 'category_name' => $subCategory->category->name,
                  'category_id' => $subCategory->category->id,
                 'image' => $imageName ? url('images/subcategories/' . $imageName) : null,
+                'status'=>$subCategory->status
             ]
         ], 200);
     }
 
     public function getAllSubCategory()
     {
-        $subCategories = SubCategory::with('category')->get();
+        $subCategories = SubCategory::with(['category' => function ($query) {
+            $query->withTrashed(); // Include soft-deleted categories
+        }])->get();
         return response()->json([
             'success' => true,
             'message' => 'SubCategories fetched successfully',
             'subCategories' => $subCategories->map(function($subCategory) {
                 return [
                     'id' => $subCategory->id,
-                    'name' => $subCategory->name,
-                    'category_name' => $subCategory->category->name,
-                    'category_id' => $subCategory->category->id,
+                    'status' => $subCategory->status,
+                    'name' => isset($subCategory->name)? $subCategory->name :"",
+                    'category_name' => isset($subCategory->category->name) ?$subCategory->category->name:"",
+                    'category_id' => isset($subCategory->category->id)?$subCategory->category->id:"",
                     'image' => url('images/subcategories/' . $subCategory->image), // Return full URL here
                 ];
             }),
