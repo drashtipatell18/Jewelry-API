@@ -121,6 +121,32 @@ class DashboradController extends Controller
         // Get product name with max quantity
         $productWithMaxQty = Product::orderBy('qty', 'desc')->first();
 
+        $topProducts = DB::table('order_products')
+        ->select('product_id', DB::raw('SUM(qty) as total_qty'))
+        ->groupBy('product_id')
+        ->orderBy('total_qty', 'desc')
+        ->take(5)
+        ->get();
+
+        $totalSalesQty = DB::table('order_products')->sum('qty');
+        $productStockData = Stock::all()->groupBy('product_id')->map(function ($items) {
+            return $items->sum('qty'); // Sum up the stock quantities for each product
+        });
+        $topProductsData = $topProducts->map(function ($product) use ($totalSalesQty, $productStockData) {
+            $productDetails = Product::find($product->product_id);
+            $stockQty = $productStockData[$product->product_id] ?? 0; // Get stock quantity or default to 0
+        
+            // Calculate percentage of sales relative to available stock
+            $salesPercentage = $stockQty > 0 ? round(($product->total_qty / $stockQty) * 100, 2) : 0;
+        
+            return [
+                'product_name' => $productDetails->product_name ?? 'Unknown Product',
+                'total_qty_sold' => $product->total_qty,
+                'stock_qty' => $stockQty, // Include the stock quantity
+                'sales_percentage' => $salesPercentage, // Add sales percentage based on stock
+            ];
+        })->toArray();
+
         return response()->json([
             'success' => true,
             'data' => [
@@ -134,6 +160,7 @@ class DashboradController extends Controller
                 'reviews' => $structuredReviews,
                 'stock' => $stockData,
                 'top_category' => $topCategoriesData,
+                'top_products' => $topProductsData,
                 'top_sales_location' => $topSalesLocation,
             ],
         ], 200);
