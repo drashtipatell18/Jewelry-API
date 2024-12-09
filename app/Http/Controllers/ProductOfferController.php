@@ -84,7 +84,9 @@ class ProductOfferController extends Controller
 
     public function getAllProductOffers()
     {
-        $productOffers = ProductOffer::with('category', 'subcategory', 'product')->get();
+         $productOffers = ProductOffer::with(['category' => function ($query) {$query->withTrashed();},
+                                             'subCategory' => function ($query) {$query->withTrashed();},
+                                             'product' => function ($query) {$query->withTrashed();}])->get();
         return response()->json([
             'success' => true,
             'message' => 'All Product Offer fetched successfully',
