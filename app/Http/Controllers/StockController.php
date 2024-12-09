@@ -65,7 +65,18 @@ class StockController extends Controller
     // }
     public function getAllStocks()
 {
-    $stocks = Stock::with(['product', 'category', 'subCategory'])->get();
+    // $stocks = Stock::with(['product', 'category', 'subCategory'])->get();
+    $stocks = Stock::with([
+    'category' => function ($query) {
+        $query->withTrashed(); // Include soft-deleted categories
+    },
+    'subCategory' => function ($query) {
+        $query->withTrashed(); // Include soft-deleted subcategories
+    },
+    'product' => function ($query) {
+        $query->withTrashed(); // Include soft-deleted products
+    }
+])->get();
 
     $transformedStocks = $stocks->map(function ($stock) {
         return [
