@@ -13,6 +13,7 @@ class ReturnOrder extends Model
         'customer_id',
         'stock_id',
         'product_id',
+        'reason',
         'return_date',
         'return_status',
         'price'
