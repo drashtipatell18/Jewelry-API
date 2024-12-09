@@ -18,6 +18,7 @@ use App\Http\Controllers\OfferController;
 use App\Http\Controllers\ReturnOrderController;
 use App\Http\Controllers\DashboradController;
 use App\Http\Controllers\WishListController;
+use App\Http\Controllers\LeaveUSMeassageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -108,6 +109,10 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/returnorder/updatestatus/{id}', [ReturnOrderController::class, 'updateStatusReturnOrder']);
     Route::get('/returnorder/getaccepted', [ReturnOrderController::class, 'getAllAcceptedReturnOrder']);
     Route::get('/returnorder/getrejected', [ReturnOrderController::class, 'getAllRejectedReturnOrder']);
+
+    // Leave US Meassage
+
+    Route::post('/leaveusmeassage/create', [LeaveUSMeassageController::class, 'createLeaveUSMeassage']);
 
     // Product
     Route::post('/products/create', [ProductController::class, 'createProduct']);
