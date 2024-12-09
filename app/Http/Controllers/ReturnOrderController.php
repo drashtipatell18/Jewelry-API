@@ -49,7 +49,21 @@ class ReturnOrderController extends Controller
 
     public function getAllReturnOrder()
     {
-        $returnOrders = ReturnOrder::with('order','customer','stock','product')->get();
+       
+        $returnOrders = ReturnOrder::with([
+    'order' => function ($query) {
+        $query->withTrashed(); // Include soft-deleted orders
+    },
+    'customer' => function ($query) {
+        $query->withTrashed(); // Include soft-deleted customers
+    },
+    'stock' => function ($query) {
+        $query->withTrashed(); // Include soft-deleted stock
+    },
+    'product' => function ($query) {
+        $query->withTrashed(); // Include soft-deleted products
+    },
+])->get();
         $formattedReturnOrders = $returnOrders->map(function($returnOrder) {
             return [
                 'id'=>$returnOrder->id,
