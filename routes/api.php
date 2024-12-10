@@ -23,7 +23,7 @@ use App\Http\Controllers\ReasonCancellationController;
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\SubFAQController;
 use App\Http\Controllers\TermConditionController;
-
+use App\Http\Controllers\PrivacyPolicyController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -159,6 +159,14 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/termconditions/update/{id}', [TermConditionController::class, 'updateTermCondition']);
     Route::delete('/termconditions/delete/{id}', [TermConditionController::class, 'deleteTermCondition']);
     Route::delete('/termconditions/allDelete', [TermConditionController::class, 'AllDeleteTermCondition']);
+
+    // Privacy Policy
+    Route::post('/privacypolicies/create', [PrivacyPolicyController::class, 'createPrivacyPolicy']);
+    Route::get('/privacypolicies/getall', [PrivacyPolicyController::class, 'getAllPrivacyPolicy']);
+    Route::get('/privacypolicies/get/{id}', [PrivacyPolicyController::class, 'getPrivacyPolicyById']);
+    Route::post('/privacypolicies/update/{id}', [PrivacyPolicyController::class, 'updatePrivacyPolicy']);
+    Route::delete('/privacypolicies/delete/{id}', [PrivacyPolicyController::class, 'deletePrivacyPolicy']);
+    Route::delete('/privacypolicies/allDelete', [PrivacyPolicyController::class, 'AllDeletePrivacyPolicy']);
 
     // Stock
     Route::post('/stocks/create', [StockController::class, 'createStock']);
