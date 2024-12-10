@@ -34,7 +34,9 @@ class DeliveryAddressController extends Controller
             'city' => $request->input('city'),
             'state' => $request->input('state'),
             'type' => $request->input('type'),
-            'status' => $request->input('status')
+            'status' => $request->input('status'),
+            'contact_name' => $request->input('contact_name'),
+            'contact_no' => $request->input('contact_no'),
         ]);
         return response()->json([
             'success' => true,
@@ -86,7 +88,9 @@ class DeliveryAddressController extends Controller
             'city' => $request->input('city'),
             'state' => $request->input('state'),
             'type' => $request->input('type'),
-            'status' => $request->input('status')
+            'status' => $request->input('status'),
+            'contact_name' => $request->input('contact_name'),
+            'contact_no' => $request->input('contact_no'),
         ]);
         return response()->json([
             'success' => true,

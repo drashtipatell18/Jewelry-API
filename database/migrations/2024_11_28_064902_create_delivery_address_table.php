@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('city');
             $table->string('state');
             $table->string('type');
+            $table->string('contact_name');
+            $table->string('contact_no');
             $table->string('status')->default('active');
             $table->timestamps();
             $table->softDeletes();
