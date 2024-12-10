@@ -20,6 +20,7 @@ class DeliveryAddressController extends Controller
             'pincode'  => 'required',
             'city'  => 'required',
             'state'  => 'required',
+            'type'  => 'required',
             'status'   => 'nullable'
         ]);
         if($validateAddress->fails()){
@@ -32,6 +33,7 @@ class DeliveryAddressController extends Controller
             'pincode' => $request->input('pincode'),
             'city' => $request->input('city'),
             'state' => $request->input('state'),
+            'type' => $request->input('type'),
             'status' => $request->input('status')
         ]);
         return response()->json([
@@ -70,6 +72,7 @@ class DeliveryAddressController extends Controller
             'pincode'  => 'required',
             'city'  => 'required',
             'state'  => 'required',
+            'type'  => 'required',
             'status'   => 'nullable'
         ]);
         if($validateAddress->fails()){
@@ -82,6 +85,7 @@ class DeliveryAddressController extends Controller
             'pincode' => $request->input('pincode'),
             'city' => $request->input('city'),
             'state' => $request->input('state'),
+            'type' => $request->input('type'),
             'status' => $request->input('status')
         ]);
         return response()->json([

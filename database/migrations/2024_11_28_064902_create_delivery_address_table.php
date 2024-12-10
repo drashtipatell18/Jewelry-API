@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('pincode');
             $table->string('city');
             $table->string('state');
+            $table->string('type');
             $table->string('status')->default('active');
             $table->timestamps();
             $table->softDeletes();
