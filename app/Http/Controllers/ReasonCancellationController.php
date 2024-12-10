@@ -94,7 +94,8 @@ class ReasonCancellationController extends Controller
         $reasonCancellation->update(['status' => $request->input('status')]);
         return response()->json([
             'success' => true,
-            'message' => 'Reason for Cancellation status updated successfully'
+            'message' => 'Reason for Cancellation status updated successfully',
+            'data'=>$reasonCancellation
         ], 200);
     }
     public function AllDeleteReasonCancellation(Request $request)
