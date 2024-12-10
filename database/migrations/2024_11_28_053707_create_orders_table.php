@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->string('order_number')->unique();
             $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('deliveryAddress_id');
             $table->unsignedBigInteger('stock_id');
@@ -21,8 +22,7 @@ return new class extends Migration
             $table->string('order_status');
             $table->string('invoice_number')->unique();
             $table->integer('qty');
-            $table->string('size');
-            $table->string('metal');
+            $table->string('discount');
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');
