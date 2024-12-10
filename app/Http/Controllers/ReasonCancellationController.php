@@ -23,6 +23,7 @@ class ReasonCancellationController extends Controller
 
         $reasonCancellation = ReasonForCancellation::create([
             'name' => $request->input('name'),
+            'status'=>'active'
         ]);
         return response()->json([
             'success' => true,
@@ -65,6 +66,7 @@ class ReasonCancellationController extends Controller
         $reasonCancellation = ReasonForCancellation::find($id);
         $reasonCancellation->update([
             'name' => $request->input('name'),
+            'stutus'=>$request->input('status')
         ]);
         return response()->json([
             'success' => true,
@@ -83,6 +85,38 @@ class ReasonCancellationController extends Controller
             'deliveryAddres' => $reasonCancellation
         ], 200);
     }
+    public function updateStatusReasonCancellation($id, Request $request)
+    {
+        $reasonCancellation = ReasonForCancellation::find($id);
+        if(!$reasonCancellation){
+            return response()->json(['success' => false, 'message' => 'Reason for Cancellation not found'], 404);
+        }
+        $reasonCancellation->update(['status' => $request->input('status')]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Reason for Cancellation status updated successfully'
+        ], 200);
+    }
+    public function AllDeleteReasonCancellation(Request $request)
+    {
+        if ($request->user()->role_id !== 1) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        ReasonForCancellation::query()->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'All reason for cancellation  deleted successfully'
+        ], 200);
+    }
+public function activeReasonForCancellation()
+    {
+        $reasonCancellation = ReasonForCancellation::where('status', 'active')->get();
 
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Active reason for cancellation retrieved successfully',
+            'data' => $reasonCancellation,
+        ], 200);
+    }
 
 }
