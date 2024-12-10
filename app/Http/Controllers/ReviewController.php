@@ -33,6 +33,8 @@ class ReviewController extends Controller
             'description' => $request->input('description'),
             'rating' => $request->input('rating'),
             'date' => Carbon::parse($request->input('date'))->format('Y-m-d'),
+            'like' => $request->input('like', 0), // Default to 0
+            'dislike' => $request->input('dislike', 0), // Default to 0
         ]);
         return response()->json([
             'success' => true,
@@ -104,6 +106,8 @@ public function getAllReviews()
             'date' => $review->date, // Assuming a field 'date' exists
             'description' => $review->description, // Assuming a field 'description' exists
             'rating' => $review->rating, // Assuming a field 'rating' exists
+            'like' => $review->like,
+            'dislike' => $review->dislike,
             'customer_id' => $review->customer_id, // Assuming a field 'customer_id' exists
             'product_id' => $review->product_id, // Assuming a field 'product_id' exists
             'customer_name' => $review->customer->name ?? '', // Assuming 'name' field exists in Customer model
@@ -177,4 +181,35 @@ public function getAllReviews()
             'data' => $reviews
         ], 200);
     }
+
+    public function updateLikeDislike(Request $request, $id)
+    {
+        $review = Review::find($id);
+       
+        if (!$review) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Review not found'
+            ], 404);
+        }
+
+      
+        $validatedData = $request->validate([
+            'like' => 'nullable|integer|in:0,1', // Allow only 0 or 1 for likes
+            'dislike' => 'nullable|integer|in:0,1', // Allow only 0 or 1 for dislikes
+        ]);
+     
+
+        $review->like = $request->has('like') ? $request->input('like') : $review->like;
+        $review->dislike = $request->has('dislike') ? $request->input('dislike') : $review->dislike;
+        $review->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Review updated successfully',
+            'data' => $review
+        ], 200);
+    }
+
+
 }

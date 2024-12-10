@@ -170,6 +170,7 @@ Route::middleware('auth.api')->group(function () {
     Route::delete('/reviews/delete/{id}', [ReviewController::class, 'deleteReview']);
     Route::delete('/reviews/allDelete', [ReviewController::class, 'AllDeleteReview']);
     Route::post('/reviews/DateSearch', [ReviewController::class, 'DateSearchReview']);
+    Route::post('/reviews/{id}/like-dislike', [ReviewController::class, 'updateLikeDislike']);
 
     // Product Offer
     Route::post('/productoffers/create', [ProductOfferController::class, 'createProductOffer']);
