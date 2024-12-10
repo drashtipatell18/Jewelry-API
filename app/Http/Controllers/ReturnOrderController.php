@@ -30,16 +30,20 @@ class ReturnOrderController extends Controller
             return response()->json($validateReturnOrder->errors(), 401);
         }
 
+
         $customer = User::find($request->input('customer_id'));
         if (!$customer) {
             return response()->json(['message' => 'Customer not found'], 404);
         }
+
+
+         // Check if phone matches
+        if ($customer->phone !== $request->input('phone')) {
+            return response()->json(['message' => 'Phone number does not match for the given customer'], 400);
+        }
+
         $providedOtp = $request->input('otp');
         $expectedOtp = "123456";
-
-        if ($providedOtp !== $expectedOtp) {
-            return response()->json(['message' => 'OTP is incorrect'], 400);
-        }
 
         $returnOrder = ReturnOrder::create([
             'order_id' => $request->input('order_id'),
@@ -50,6 +54,7 @@ class ReturnOrderController extends Controller
             'return_status' => 'pending',
             'price' => $request->input('price'),
             'reason'=>$request->input('reason'),
+            'phone' => $request->input('phone'),
             'otp' => $providedOtp
         ]);
         return response()->json([

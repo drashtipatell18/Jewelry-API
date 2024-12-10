@@ -17,7 +17,8 @@ class ReturnOrder extends Model
         'return_date',
         'return_status',
         'price',
-        'otp'
+        'otp',
+        'phone'
     ];
 
     public function order()
