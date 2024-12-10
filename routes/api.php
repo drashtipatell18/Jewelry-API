@@ -231,11 +231,14 @@ Route::middleware('auth.api')->group(function () {
     Route::delete('/deliveryAddress/delete/{id}', [DeliveryAddressController::class, 'deleteDeliveryAddress']);
 
      // Reason For Cancellation
-     Route::post('/reasonCancellation/create', [ReasonCancellationController::class, 'createReasonCancellation']);
+      Route::post('/reasonCancellation/create', [ReasonCancellationController::class, 'createReasonCancellation']);
      Route::get('/reasonCancellation/getall', [ReasonCancellationController::class, 'getAllReasonCancellation']);
+     Route::get('/reasonCancellation/getallactive', [ReasonCancellationController::class, 'activeReasonForCancellation']);
      Route::get('/reasonCancellation/get/{id}', [ReasonCancellationController::class, 'getReasonCancellationById']);
      Route::post('/reasonCancellation/update/{id}', [ReasonCancellationController::class, 'updateReasonCancellation']);
+     Route::post('/reasonCancellation/updatestatus/{id}', [ReasonCancellationController::class, 'updateStatusReasonCancellation']);
      Route::delete('/reasonCancellation/delete/{id}', [ReasonCancellationController::class, 'deleteReasonCancellation']);
+     Route::delete('/reasonCancellation/alldelete', [ReasonCancellationController::class, 'AllDeleteReasonCancellation']);
 
 
 });
