@@ -33,8 +33,7 @@ class ReviewController extends Controller
             'description' => $request->input('description'),
             'rating' => $request->input('rating'),
             'date' => Carbon::parse($request->input('date'))->format('Y-m-d'),
-            'like' => $request->input('like', 0), // Default to 0
-            'dislike' => $request->input('dislike', 0), // Default to 0
+            'like_or_dislike' => $request->input('like', 0), // Default to 0
         ]);
         return response()->json([
             'success' => true,
@@ -106,8 +105,7 @@ public function getAllReviews()
             'date' => $review->date, // Assuming a field 'date' exists
             'description' => $review->description, // Assuming a field 'description' exists
             'rating' => $review->rating, // Assuming a field 'rating' exists
-            'like' => $review->like,
-            'dislike' => $review->dislike,
+            'like_or_dislike' => $review->like_or_dislike,
             'customer_id' => $review->customer_id, // Assuming a field 'customer_id' exists
             'product_id' => $review->product_id, // Assuming a field 'product_id' exists
             'customer_name' => $review->customer->name ?? '', // Assuming 'name' field exists in Customer model
@@ -192,8 +190,6 @@ public function getAllReviews()
                 'message' => 'Review not found'
             ], 404);
         }
-
-
         if (auth()->id() !== $review->customer_id) {
             return response()->json([
                 'success' => false,
@@ -201,17 +197,12 @@ public function getAllReviews()
             ], 403);
         }
 
-      
-        $validatedData = $request->validate([
-            'like' => 'nullable|integer|in:0,1', // Allow only 0 or 1 for likes
-            'dislike' => 'nullable|integer|in:0,1', // Allow only 0 or 1 for dislikes
-        ]);
-     
-
-        $review->like = $request->has('like') ? $request->input('like') : $review->like;
-        $review->dislike = $request->has('dislike') ? $request->input('dislike') : $review->dislike;
+        if ($request->has('like_or_dislike')) {
+            $review->like_or_dislike = $request->input('like_or_dislike');
+        }
+       
         $review->save();
-
+     
         return response()->json([
             'success' => true,
             'message' => 'Review updated successfully',

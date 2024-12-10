@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('reviews', function (Blueprint $table) {
-            $table->integer('like')->default(0);
-            $table->integer('dislike')->default(0);
+            $table->integer('like_or_dislike')->default(0);
         });
     }
 
