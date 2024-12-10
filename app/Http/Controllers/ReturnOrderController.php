@@ -24,7 +24,8 @@ class ReturnOrderController extends Controller
             'product_id' => 'required|exists:products,id',
             'return_date' => 'required',
             'return_status' => 'required|in:pending,accepted,rejected',
-            'price' => 'required'
+            'price' => 'required',
+            'otp' => 'required|digits:6'
         ]);
         if($validateReturnOrder->fails()){
             return response()->json($validateReturnOrder->errors(), 401);
@@ -41,6 +42,7 @@ class ReturnOrderController extends Controller
         if ($customer->phone !== $request->input('phone')) {
             return response()->json(['message' => 'Phone number does not match for the given customer'], 400);
         }
+        
 
         $providedOtp = $request->input('otp');
         $expectedOtp = "123456";
