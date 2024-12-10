@@ -20,19 +20,20 @@ class ProductController extends Controller
             ], 403);
         }
         $validator = Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
             'product_name' => 'required',
             'category_id' => 'required|exists:categories,id',
             'sub_category_id' => 'required|exists:sub_categories,id',
             'metal_color' => 'required',
             'metal' => 'required',
-            'diamond_color' => 'required',
-            'diamond_quality' => 'required',
-            'clarity' => 'required',
-            'size_id' => 'required|exists:sizes,id',
+            // 'diamond_color' => 'required',
+            // 'diamond_quality' => 'required',
+            // 'clarity' => 'required',
+            // 'size_id' => 'required|exists:sizes,id',
             'weight' => 'required|numeric|min:0',
-            'no_of_diamonds' => 'required|integer|min:0',
-            'diamond_setting' => 'required',
-            'diamond_shape' => 'required',
+            // 'no_of_diamonds' => 'required|integer|min:0',
+            // 'diamond_setting' => 'required',
+            // 'diamond_shape' => 'required',
             'collection' => 'required',
             'gender' => 'required',
             'status' => 'required|in:active,inactive',
@@ -40,6 +41,7 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'discount' => 'nullable|numeric|min:0|max:100',
             'image' => 'array',
+        ]);
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 400);
@@ -281,23 +283,23 @@ class ProductController extends Controller
         }
         $imageNames = []; // Initialize $imageNames
 
-        $validator = Validator::make($request->all(), [
+         $validator = Validator::make($request->all(), [
             'product_name' => 'required',
             'category_id' => 'required|exists:categories,id',
             'sub_category_id' => 'required|exists:sub_categories,id',
             'metal_color' => 'required',
             'metal' => 'required',
-            'status' => 'required|in:active,inactive',
-            'diamond_color' => 'required',
-            'diamond_quality' => 'required',
-            'clarity' => 'required',
-            'size_id' => 'required|exists:sizes,id',
+            // 'diamond_color' => 'required',
+            // 'diamond_quality' => 'required',
+            // 'clarity' => 'required',
+            // 'size_id' => 'required|exists:sizes,id',
             'weight' => 'required|numeric|min:0',
-            'no_of_diamonds' => 'required|integer|min:0',
-            'diamond_setting' => 'required',
-            'diamond_shape' => 'required',
+            // 'no_of_diamonds' => 'required|integer|min:0',
+            // 'diamond_setting' => 'required',
+            // 'diamond_shape' => 'required',
             'collection' => 'required',
             'gender' => 'required',
+            'status' => 'required|in:active,inactive',
             'qty' => 'required|integer|min:0',
             'price' => 'required|numeric|min:0',
             'discount' => 'nullable|numeric|min:0|max:100',

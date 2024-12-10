@@ -10,9 +10,7 @@ class DeliveryAddressController extends Controller
 {
     public function createDeliveryAddress(Request $request)
     {
-        if ($request->user()->role_id !== 1) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        
 
         $validateAddress = Validator::make($request->all(), [
             'customer_id' => 'required|exists:users,id',

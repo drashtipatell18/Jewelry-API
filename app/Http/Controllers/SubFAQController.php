@@ -36,12 +36,25 @@ class SubFAQController extends Controller
         ], 200);
     }
 
-    public function getAllSubFAQ()
+     public function getAllSubFAQ()
     {
-        $subfaqs = SubFAQ::all();
+        $subfaqs = SubFAQ::with(['faq'=>function ($query) {
+            $query->withTrashed(); // Include soft-deleted categories
+        }])->get();
         return response()->json([
             'success' => true,
-            'subfaqs' => $subfaqs
+             'subfaqs' => $subfaqs->map(function($subfaq) {
+                return [
+                    'id' => $subfaq->id,
+                    'faq_id' => $subfaq->faq_id,
+                    'question' =>$subfaq->question,
+                    'answer' =>$subfaq->answer,
+                    'faq_name' => isset($subfaq->faq->name) ?$subfaq->faq->name:"",
+                    'created_at' =>$subfaq->created_at,
+                    'updated_at' =>$subfaq->updated_at,
+                    'deleted_at' =>$subfaq->deleted_at,
+                ];
+            }),
         ], 200);
     }
 
