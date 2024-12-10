@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Stock;
 use App\Models\Order;
 use App\Models\User;
+use Illuminate\Support\Str;
 class ReturnOrderController extends Controller
 {
     public function createReturnOrder(Request $request)
@@ -29,6 +30,17 @@ class ReturnOrderController extends Controller
             return response()->json($validateReturnOrder->errors(), 401);
         }
 
+        $customer = User::find($request->input('customer_id'));
+        if (!$customer) {
+            return response()->json(['message' => 'Customer not found'], 404);
+        }
+        $providedOtp = $request->input('otp');
+        $expectedOtp = "123456";
+
+        if ($providedOtp !== $expectedOtp) {
+            return response()->json(['message' => 'OTP is incorrect'], 400);
+        }
+
         $returnOrder = ReturnOrder::create([
             'order_id' => $request->input('order_id'),
             'customer_id' => $request->input('customer_id'),
@@ -37,7 +49,8 @@ class ReturnOrderController extends Controller
             'return_date' => $request->input('return_date'),
             'return_status' => 'pending',
             'price' => $request->input('price'),
-            'reason'=>$request->input('reason')
+            'reason'=>$request->input('reason'),
+            'otp' => $providedOtp
         ]);
         return response()->json([
             'success' => true,
