@@ -12,5 +12,6 @@ class ReasonForCancellation extends Model
     protected $table = "reason_for_cancellation";
     protected $fillable = [
         'name',
+    'status
     ];
 }
