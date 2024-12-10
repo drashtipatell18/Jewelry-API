@@ -197,9 +197,13 @@ public function getAllReviews()
             ], 403);
         }
 
-        if ($request->has('like_or_dislike')) {
-            $review->like_or_dislike = $request->input('like_or_dislike');
-        }
+        $request->validate([
+            'like_or_dislike' => 'required|in:0,1,2', // 0 for none, 1 for like, 2 for dislike
+        ]);
+    
+        $likeOrDislike = (int) $request->input('like_or_dislike');
+
+        $review->like_or_dislike = $likeOrDislike;
        
         $review->save();
      
