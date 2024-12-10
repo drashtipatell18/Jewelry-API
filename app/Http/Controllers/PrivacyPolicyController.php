@@ -77,7 +77,14 @@ class PrivacyPolicyController extends Controller
         ], 200);
     }
 
-    
+    public function AllDeletePrivacyPolicy()
+    {
+        PrivacyPolicy::query()->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'All Privacy Policy deleted successfully'
+        ], 200);
+    }
 
 }
 

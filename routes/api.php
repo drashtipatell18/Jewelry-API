@@ -45,6 +45,7 @@ Route::get('/categories/getallactive', [CategoryController::class, 'getAllActive
 Route::get('/subcategories/getallactive', [SubCategoryController::class, 'getAllActiveSubCategory']);
 Route::get('/products/getallactive', [ProductController::class, 'activeProduct']);
 Route::get('/termconditions/getall', [TermConditionController::class, 'getAllTermCondition']);
+Route::get('/sizes/getall', [SizeController::class, 'getAllSizes']);
 
 // auth
 Route::middleware('auth.api')->group(function () {
@@ -86,7 +87,6 @@ Route::middleware('auth.api')->group(function () {
 
     // Size
     Route::post('/sizes/create', [SizeController::class, 'createSize']);
-    Route::get('/sizes/getall', [SizeController::class, 'getAllSizes']);
     Route::get('/sizes/get/{id}', [SizeController::class, 'getSizeById']);
     Route::post('/sizes/update/{id}', [SizeController::class, 'updateSize']);
     Route::delete('/sizes/delete/{id}', [SizeController::class, 'deleteSize']);

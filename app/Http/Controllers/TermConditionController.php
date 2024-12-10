@@ -86,4 +86,14 @@ class TermConditionController extends Controller
             'message' => 'Term Condition deleted successfully'
         ], 200);
     }
+
+    public function AllDeleteTermCondition()
+    {
+        TermCondition::query()->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'All Term Condition deleted successfully'
+        ], 200);
+    }
+
 }
