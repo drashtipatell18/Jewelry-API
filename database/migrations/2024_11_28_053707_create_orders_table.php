@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('order_status');
             $table->string('invoice_number')->unique();
             $table->integer('qty');
+            $table->string('size');
+            $table->string('metal');
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');

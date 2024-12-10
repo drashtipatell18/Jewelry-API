@@ -11,168 +11,194 @@ use App\Models\Order_Product;
 class OrderController extends Controller
 {
     public function createOrder(Request $request)
-    {
-        if ($request->user()->role_id !== 1) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $validateOrder = Validator::make($request->all(), [
-            'customer_id' => 'required|exists:users,id',
-            'order_date'  => 'required|date',
-            'total_amount' => 'required|numeric',
-            'order_status' => 'required|in:pending,delivered,completed,cancelled,transit',
-            'deliveryAddress_id' => 'nullable|exists:delivery_address,id',
-            'products' => 'required|array',
-            'products.*.product_id' => 'required|exists:products,id',
-            'products.*.qty' => 'required|integer|min:1'
-        ]);
-
-        if ($validateOrder->fails()) {
-            return response()->json($validateOrder->errors(), 401);
-        }
-
-        // Initialize an array to hold product IDs
-        $productIds = [];
-
-        // Process each product in the order
-        foreach ($request->input('products') as $productData) {
-            // $stock = Stock::find($productData['product_id']);
-            $stock = Stock::where('product_id', $productData['product_id'])->first();
-            $product = Product::find($productData['product_id']);
-            // Check if stock quantity is sufficient
-            if ($stock->qty < $productData['qty']) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Insufficient stock available for product ID ' . $productData['product_id']
-                ], 400);
-            }
-
-            // Deduct the ordered quantity from the stock
-            $stock->qty -=  $productData['qty'];
-            $product->qty -=  $productData['qty'];
-            $stock->save();
-            $product->save();
-        }
-
-          // Generate a unique 6-digit invoice number
-        do {
-            $invoiceNumber = mt_rand(10000000, 99999999);
-        } while (Order::where('invoice_number', $invoiceNumber)->exists());
-
-        // Create the order
-        $order = Order::create([
-            'customer_id' => $request->input('customer_id'),
-            'order_date' => $request->input('order_date'),
-            'total_amount' => $request->input('total_amount'),
-            'order_status' => $request->input('order_status'),
-            'invoice_number' => $invoiceNumber,
-            'deliveryAddress_id' => $request->input('deliveryAddress_id'),
-        ]);
-
-        // Create order items and get product name
-        $orderItems = [];
-        foreach ($request->input('products') as $productData) {
-            $product = Product::find($productData['product_id']);
-            $order->products()->attach($productData['product_id'], ['qty' => $productData['qty']]);
-            $orderItems[] = [
-                'product_id' => $productData['product_id'],
-                'product_name' => $product->product_name ?? 'Product name not available',
-                'qty' => $productData['qty'],
-                'price' => $product->price
-            ];
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Order created successfully',
-            'order' => [
-                'order_id' => $order->id,
-                'customer_id' => $order->customer_id,
-                'order_date' => $order->order_date,
-                'total_amount' => $order->total_amount,
-                'order_status' => $order->order_status,
-                'invoice_number' => $order->invoice_number,
-                'deliveryAddress_id' => $order->deliveryAddress_id,
-                'order_items' => $orderItems
-            ],
-        ], 200);
+{
+    if ($request->user()->role_id !== 1) {
+        return response()->json(['message' => 'Unauthorized'], 403);
     }
 
-    public function updateOrder(Request $request, $id)
-    {
-        if ($request->user()->role_id !== 1) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-        $validateOrder = Validator::make($request->all(), [
-            'customer_id' => 'required|exists:users,id',
-            'order_date'  => 'required',
-            'total_amount' => 'required',
-            'order_status' => 'required|in:pending,delivered,completed,cancelled,transit',
-            'deliveryAddress_id' => 'nullable',
-            'products' => 'required|array',
-            'products.*.product_id' => 'required|exists:products,id',
-            'products.*.qty' => 'required|integer|min:1'
-        ]);
-        if($validateOrder->fails()){
-            return response()->json($validateOrder->errors(), 401);
-        }
-        $order = Order::find($id);
-        if (!$order) {
-            return response()->json(['message' => 'Order not found'], 404);
+    $validateOrder = Validator::make($request->all(), [
+        'customer_id' => 'required|exists:users,id',
+        'order_date'  => 'required|date',
+        'order_status' => 'required|in:pending,delivered,completed,cancelled,transit',
+        'deliveryAddress_id' => 'nullable|exists:delivery_address,id',
+        'products' => 'required|array',
+        'products.*.product_id' => 'required|exists:products,id',
+        'products.*.qty' => 'required|integer|min:1'
+    ]);
+
+    if ($validateOrder->fails()) {
+        return response()->json($validateOrder->errors(), 401);
+    }
+
+    $totalAmount = 0; // Initialize total amount
+    $orderItems = []; // Initialize order items
+
+    foreach ($request->input('products') as $productData) {
+        $stock = Stock::where('product_id', $productData['product_id'])->first();
+        $product = Product::find($productData['product_id']);
+
+        if ($stock->qty < $productData['qty']) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Insufficient stock available for product ID ' . $productData['product_id']
+            ], 400);
         }
 
-        // Process each product in the order
-        foreach ($request->input('products') as $productData) {
-            // Fetch stock using the correct method
-            $stock = Stock::where('product_id', $productData['product_id'])->first();
-            $product = Product::find($productData['product_id']);
-            if($productData['product_id'] == $product->id){
-                // Check if stock quantity is sufficient
-                $existingProduct = $order->products()->where('product_id', $productData['product_id'])->first();
-                $qtyDifference = $productData['qty'] - ($existingProduct ? $existingProduct->pivot->qty : 0);
-            }
-            // Check if stock quantity is sufficient after considering the difference
-            if ($stock->qty < $qtyDifference) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Insufficient stock available for product ID ' . $productData['product_id']
-                ], 400);
-            }
+        $stock->qty -= $productData['qty'];
+        $product->qty -= $productData['qty'];
+        $stock->save();
+        $product->save();
 
-        // Update the stock quantity
+        $totalPrice = $product->price * $productData['qty'];
+        $totalAmount += $totalPrice; // Add to total amount
+
+        $orderItems[] = [
+            'product_id' => $productData['product_id'],
+            'product_name' => $product->product_name ?? 'Product name not available',
+            'qty' => $productData['qty'],
+            'price' => $product->price,
+            'total_price' => $totalPrice,
+            'discount' => $product->discount,
+        ];
+    }
+
+    do {
+        $invoiceNumber = mt_rand(10000000, 99999999);
+    } while (Order::where('invoice_number', $invoiceNumber)->exists());
+
+    $order = Order::create([
+        'customer_id' => $request->input('customer_id'),
+        'order_date' => $request->input('order_date'),
+        'total_amount' => $totalAmount, // Use the calculated total amount
+        'order_status' => $request->input('order_status'),
+        'invoice_number' => $invoiceNumber,
+        'deliveryAddress_id' => $request->input('deliveryAddress_id'),
+        'size' => $request->input('size'),
+        'metal' => $request->input('metal'),
+    ]);
+
+    foreach ($orderItems as $item) {
+        $order->products()->attach($item['product_id'], ['qty' => $item['qty']]);
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Order created successfully',
+        'order' => [
+            'order_id' => $order->id,
+            'customer_id' => $order->customer_id,
+            'order_date' => $order->order_date,
+            'total_amount' => $order->total_amount,
+            'order_status' => $order->order_status,
+            'invoice_number' => $order->invoice_number,
+            'deliveryAddress_id' => $order->deliveryAddress_id,
+            'size' => $order->size,
+            'metal' => $order->metal,
+            'order_items' => $orderItems
+        ],
+    ], 200);
+}
+
+public function updateOrder(Request $request, $id)
+{
+    if ($request->user()->role_id !== 1) {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+
+    $validateOrder = Validator::make($request->all(), [
+        'customer_id' => 'required|exists:users,id',
+        'order_date'  => 'required',
+        'total_amount' => 'required',
+        'order_status' => 'required|in:pending,delivered,completed,cancelled,transit',
+        'deliveryAddress_id' => 'nullable',
+        'products' => 'required|array',
+        'products.*.product_id' => 'required|exists:products,id',
+        'products.*.qty' => 'required|integer|min:1'
+    ]);
+
+    if ($validateOrder->fails()) {
+        return response()->json($validateOrder->errors(), 401);
+    }
+
+    $order = Order::find($id);
+    if (!$order) {
+        return response()->json(['message' => 'Order not found'], 404);
+    }
+
+    $totalAmount = 0;
+    $orderItems = [];
+
+    // First, calculate the total changes needed in stock
+    foreach ($request->input('products') as $productData) {
+        $stock = Stock::where('product_id', $productData['product_id'])->first();
+        $product = Product::find($productData['product_id']);
+
+        // Find existing order product
+        $existingProduct = $order->products()->where('product_id', $productData['product_id'])->first();
+
+        // Calculate quantity difference
+        $qtyDifference = $productData['qty'] - ($existingProduct ? $existingProduct->pivot->qty : 0);
+
+        // Check stock sufficiency
+        if ($stock->qty < $qtyDifference) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Insufficient stock available for product ID ' . $productData['product_id']
+            ], 400);
+        }
+
+        // Update stock
         $stock->qty -= $qtyDifference;
-
         $stock->save();
 
-            // Update the order product quantity
-            $order->products()->syncWithoutDetaching([$productData['product_id'] => ['qty' => $productData['qty']]]);
-        }
+        // Prepare order items
+        $totalPrice = $product->price * $productData['qty'];
+        $totalAmount += $totalPrice;
 
-        // Update the order
-        $order->update([
-            'customer_id' => $request->input('customer_id'),
-            'order_date' => $request->input('order_date'),
-            'total_amount' => $request->input('total_amount'),
-            'order_status' => $request->input('order_status'),
-            'deliveryAddress_id' => $request->input('deliveryAddress_id'),
-        ]);
-        $orderItems = [];
-        foreach ($request->input('products') as $productData) {
-            $product = Product::find($productData['product_id']);
-            $order->products()->attach($productData['product_id'], ['qty' => $productData['qty']]);
-            $orderItems[] = [
-                'product_id' => $productData['product_id'],
-                'product_name' => $product->product_name ?? 'Product name not available',
-                'qty' => $productData['qty'],
-                'price' => $product->price
-            ];
-        }
-        return response()->json([
-            'success' => true,
-            'message' => 'Order updated successfully',
-            'order' => $order
-        ], 200);
+        $orderItems[] = [
+            'product_id' => $productData['product_id'],
+            'product_name' => $product->product_name ?? 'Product name not available',
+            'qty' => $productData['qty'],
+            'price' => $product->price,
+            'total_price' => $totalPrice
+        ];
     }
+
+    // Update the order
+    $order->update([
+        'customer_id' => $request->input('customer_id'),
+        'order_date' => $request->input('order_date'),
+        'total_amount' => $totalAmount, // Use calculated total amount
+        'order_status' => $request->input('order_status'),
+        'deliveryAddress_id' => $request->input('deliveryAddress_id'),
+        'size' => $request->input('size'),
+        'metal' => $request->input('metal'),
+    ]);
+
+    // Sync products with new quantities
+    $productsToSync = [];
+    foreach ($request->input('products') as $productData) {
+        $productsToSync[$productData['product_id']] = ['qty' => $productData['qty']];
+    }
+    $order->products()->sync($productsToSync);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Order updated successfully',
+        'order' => [
+            'order_id' => $order->id,
+            'customer_id' => $order->customer_id,
+            'order_date' => $order->order_date,
+            'total_amount' => $totalAmount,
+            'order_status' => $order->order_status,
+            'invoice_number' => $order->invoice_number,
+            'deliveryAddress_id' => $order->deliveryAddress_id,
+            'size' => $order->size,
+            'metal' => $order->metal,
+            'order_items' => $orderItems
+        ]
+    ], 200);
+}
 
 
      public function getAllOrder()
@@ -202,6 +228,8 @@ class OrderController extends Controller
                 'created_at' => $order->created_at,
                 'updated_at' => $order->updated_at,
                 'deleted_at' => $order->deleted_at,
+                'size' => $order->size,
+                'metal' => $order->metal,
                 'deliveryAddress_id' => $order->deliveryAddress_id,
                 'customer_name' => $order->customer ? $order->customer->name : null,
                 'customer_email' => $order->customer ? $order->customer->email : null,
@@ -244,6 +272,8 @@ class OrderController extends Controller
                 'invoice_number' => $order->invoice_number,
                 'order_status' => $order->order_status,
                 'deliveryAddress' => $order->deliveryAddress,
+                'size' => $order->size,
+                'metal' => $order->metal,
                 'order_items' => $orderItems
             ],
         ], 200);

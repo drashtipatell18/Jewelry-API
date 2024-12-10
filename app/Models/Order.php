@@ -10,7 +10,7 @@ class Order extends Model
 {
     use HasFactory, SoftDeletes;
     protected $table = "orders";
-    protected $fillable = ['customer_id','deliveryAddress_id', 'product_id', 'products','order_date','total_amount','order_status','invoice_number','qty'];
+    protected $fillable = ['customer_id','deliveryAddress_id', 'product_id', 'products','order_date', 'total_amount','order_status','invoice_number','qty','size','metal'];
 
     public function customer()
     {
@@ -24,5 +24,16 @@ class Order extends Model
     {
         return $this->belongsToMany(Product::class, 'order_products')
                     ->withPivot('qty');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($order) {
+            do {
+                $order->id = mt_rand(100000, 999999); // Generate a 6-digit number
+            } while (Order::where('id', $order->id)->exists());
+        });
     }
 }
