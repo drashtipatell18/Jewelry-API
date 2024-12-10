@@ -190,6 +190,8 @@ class ProductController extends Controller
             return [
                 'id' => $product->id,
                 'status' => $product->status,
+                  'category_id'=> $product->category_id,
+                'sub_category_id'=> $product->sub_category_id,
                 'product_name' => $product->product_name,
                 'category_name' => $product->category ? $product->category->name : null,
                 'sub_category_name' => $product->subCategory ? $product->subCategory->name : null,
