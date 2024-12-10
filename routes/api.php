@@ -22,6 +22,8 @@ use App\Http\Controllers\LeaveUSMeassageController;
 use App\Http\Controllers\ReasonCancellationController;
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\SubFAQController;
+use App\Http\Controllers\TermConditionController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -42,6 +44,7 @@ Route::post('/user/create', [UserController::class, 'createUser']);
 Route::get('/categories/getallactive', [CategoryController::class, 'getAllActiveCategory']);
 Route::get('/subcategories/getallactive', [SubCategoryController::class, 'getAllActiveSubCategory']);
 Route::get('/products/getallactive', [ProductController::class, 'activeProduct']);
+Route::get('/termconditions/getall', [TermConditionController::class, 'getAllTermCondition']);
 
 // auth
 Route::middleware('auth.api')->group(function () {
@@ -149,7 +152,14 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/subfaqs/update/{id}', [SubFAQController::class, 'updateSubFAQ']);
     Route::delete('/subfaqs/delete/{id}', [SubFAQController::class, 'deleteSubFAQ']);
     Route::delete('/subfaqs/allDelete', [SubFAQController::class, 'AllDeleteSubFAQ']);
-    
+
+    // Term Condition
+    Route::post('/termconditions/create', [TermConditionController::class, 'createTermCondition']);
+    Route::get('/termconditions/get/{id}', [TermConditionController::class, 'getTermConditionById']);
+    Route::post('/termconditions/update/{id}', [TermConditionController::class, 'updateTermCondition']);
+    Route::delete('/termconditions/delete/{id}', [TermConditionController::class, 'deleteTermCondition']);
+    Route::delete('/termconditions/allDelete', [TermConditionController::class, 'AllDeleteTermCondition']);
+
     // Stock
     Route::post('/stocks/create', [StockController::class, 'createStock']);
     Route::get('/stocks/getall', [StockController::class, 'getAllStocks']);
