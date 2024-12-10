@@ -193,6 +193,14 @@ public function getAllReviews()
             ], 404);
         }
 
+
+        if (auth()->id() !== $review->customer_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not authorized to update this review'
+            ], 403);
+        }
+
       
         $validatedData = $request->validate([
             'like' => 'nullable|integer|in:0,1', // Allow only 0 or 1 for likes
