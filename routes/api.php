@@ -24,6 +24,7 @@ use App\Http\Controllers\FAQController;
 use App\Http\Controllers\SubFAQController;
 use App\Http\Controllers\TermConditionController;
 use App\Http\Controllers\PrivacyPolicyController;
+use App\Http\Controllers\SearchController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -46,7 +47,7 @@ Route::get('/subcategories/getallactive', [SubCategoryController::class, 'getAll
 Route::get('/products/getallactive', [ProductController::class, 'activeProduct']);
 Route::get('/termconditions/getall', [TermConditionController::class, 'getAllTermCondition']);
 Route::get('/sizes/getall', [SizeController::class, 'getAllSizes']);
-
+Route::get('/search', [SearchController::class, 'search']);
 // auth
 Route::middleware('auth.api')->group(function () {
 
