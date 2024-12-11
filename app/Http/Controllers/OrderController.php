@@ -370,7 +370,7 @@ class OrderController extends Controller
         ], 200);
     }
 
-    public function getOrdersByUserId(Request $request)
+     public function getOrdersByUserId(Request $request)
     {
         $userId = $request->input('customer_id');
         // Fetch orders for the specified user ID
@@ -379,6 +379,13 @@ class OrderController extends Controller
           $orderItems = [];
             foreach ($orders as $order) {
                 $order->products()->each(function ($product) use (&$orderItems) {
+                       $imageUrls = json_decode($product->image, true);
+            if (!is_array($imageUrls)) {
+                $imageUrls = [];
+            }
+            $imageUrls = array_map(function($imageName) {
+                return url('images/products/' . $imageName);
+            }, $imageUrls);
                     $orderItems[] = [
                         'product_id' => $product->id,
                         'product_name' => $product->product_name ?? '',
@@ -386,6 +393,7 @@ class OrderController extends Controller
                         'price' => $product->price,
                         'size' => $product->pivot->size,
                         'metal' => $product->pivot->metal,
+                        'image'=>$imageUrls
                     ];
                 });
             }
