@@ -105,6 +105,7 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/order/invoice/{id}', [OrderController::class, 'invoiceOrder']);
     Route::post('/orderproduct/update/{id}', [OrderController::class, 'updateOrderProduct']);
     Route::delete('/orderproduct/delete/{id}', [OrderController::class, 'deleteOrderProduct']);
+    Route::post('/order/getbyuserid', [OrderController::class, 'getOrdersByUserId']);
 
     // Return Order
     Route::post('/returnorder/create', [ReturnOrderController::class, 'createReturnOrder']);

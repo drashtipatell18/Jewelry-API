@@ -81,13 +81,13 @@ class OrderController extends Controller
 
       foreach ($orderItems as $item) {
     // Apply conditions for size
-    $size = !empty($item['size']) && in_array($item['size'], ['Small', 'Medium', 'Large']) 
-        ? $item['size'] 
+    $size = !empty($item['size']) && in_array($item['size'], ['Small', 'Medium', 'Large'])
+        ? $item['size']
         : null;
 
     // Apply conditions for metal
-    $metal = !empty($item['metal']) && in_array($item['metal'], ['Gold', 'Silver', 'Platinum']) 
-        ? $item['metal'] 
+    $metal = !empty($item['metal']) && in_array($item['metal'], ['Gold', 'Silver', 'Platinum'])
+        ? $item['metal']
         : '';
 
     // Attach product with validated size and metal
@@ -392,5 +392,30 @@ class OrderController extends Controller
             'orderProduct' => $orderProduct
         ], 200);
     }
-    
+
+    public function getOrdersByUserId(Request $request)
+    {
+        $userId = $request->input('customer_id');
+        // Fetch orders for the specified user ID
+        $orders = Order::where('customer_id', $userId)->with(['customer:id,name,email,phone', 'deliveryAddress:id,address', 'products'])->get();
+        $orderItems = [];
+        foreach ($orders as $order) {
+            foreach ($order->products as $product) {
+                $orderItems[] = [
+                    'product_id' => $product->id,
+                    'product_name' => $product->product_name ?? '',
+                    'qty' => $product->pivot->qty,
+                    'price' => $product->price,
+                    'size' => $product->pivot->size,
+                    'metal' => $product->pivot->metal,
+                ];
+            }
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Orders fetched successfully',
+            'orders' => $orders,
+            'order_items' => $orderItems,
+        ], 200);
+    }
 }
