@@ -36,6 +36,7 @@ class OrderController extends Controller
         foreach ($request->input('products') as $productData) {
             $stock = Stock::where('product_id', $productData['product_id'])->first();
             $product = Product::find($productData['product_id']);
+
             if ($stock->qty < $productData['qty']) {
                 return response()->json([
                     'success' => false,
@@ -55,10 +56,8 @@ class OrderController extends Controller
                 'product_id' => $productData['product_id'],
                 'product_name' => $product->product_name ?? 'Product name not available',
                 'qty' => $productData['qty'],
-                // 'size' => $productData['size'],
-                // 'metal' => $productData['metal'],
-                'size' => !empty($productData['size']) ? $productData['size'] : '',
-                'metal' => !empty($productData['metal']) ? $productData['metal'] : '',
+                'size' => $productData['size'],
+                'metal' => $productData['metal'],
                 'price' => $product->price,
                 'total_price' => $totalPrice,
                 'discount' => $product->discount,
@@ -79,24 +78,9 @@ class OrderController extends Controller
             'discount' => $request->input('discount'),
         ]);
 
-      foreach ($orderItems as $item) {
-    // Apply conditions for size
-    $size = !empty($item['size']) && in_array($item['size'], ['Small', 'Medium', 'Large'])
-        ? $item['size']
-        : null;
-
-    // Apply conditions for metal
-    $metal = !empty($item['metal']) && in_array($item['metal'], ['Gold', 'Silver', 'Platinum'])
-        ? $item['metal']
-        : '';
-
-    // Attach product with validated size and metal
-    $order->products()->attach($item['product_id'], [
-        'qty' => $item['qty'],
-        'size' => $size,
-        'metal' => $metal,
-    ]);
-}
+        foreach ($orderItems as $item) {
+            $order->products()->attach($item['product_id'], ['qty' => $item['qty'], 'size' => $item['size'], 'metal' => $item['metal']]);
+        }
         return response()->json([
             'success' => true,
             'message' => 'Order created successfully',
@@ -224,13 +208,6 @@ class OrderController extends Controller
         $orderItems = [];
         foreach ($orders as $order) {
             $order->products()->each(function ($product) use (&$orderItems) {
-                 $imageUrls = json_decode($product->image, true);
-            if (!is_array($imageUrls)) {
-                $imageUrls = [];
-            }
-            $imageUrls = array_map(function($imageName) {
-                return url('images/products/' . $imageName);
-            }, $imageUrls);
                 $orderItems[] = [
                     'product_id' => $product->id,
                     'product_name' => $product->product_name ?? '',
@@ -238,7 +215,6 @@ class OrderController extends Controller
                     'price' => $product->price,
                     'size' => $product->pivot->size,
                     'metal' => $product->pivot->metal,
-                    'image'=>$imageUrls
                 ];
             });
         }
@@ -275,6 +251,7 @@ class OrderController extends Controller
     public function getOrderById(Request $request,$id)
     {
         $order = Order::with(['customer:id,name,email,phone', 'deliveryAddress:id,address', 'products'])->find($id);
+        
         $orderItems = [];
         if ($order) {
             $order->products()->each(function ($product) use (&$orderItems) {
@@ -397,25 +374,48 @@ class OrderController extends Controller
     {
         $userId = $request->input('customer_id');
         // Fetch orders for the specified user ID
-        $orders = Order::where('customer_id', $userId)->with(['customer:id,name,email,phone', 'deliveryAddress:id,address', 'products'])->get();
-        $orderItems = [];
-        foreach ($orders as $order) {
-            foreach ($order->products as $product) {
-                $orderItems[] = [
-                    'product_id' => $product->id,
-                    'product_name' => $product->product_name ?? '',
-                    'qty' => $product->pivot->qty,
-                    'price' => $product->price,
-                    'size' => $product->pivot->size,
-                    'metal' => $product->pivot->metal,
-                ];
+        $orders = Order::where('customer_id', $userId)->with(['customer', 'deliveryAddress'])->get();
+
+          $orderItems = [];
+            foreach ($orders as $order) {
+                $order->products()->each(function ($product) use (&$orderItems) {
+                    $orderItems[] = [
+                        'product_id' => $product->id,
+                        'product_name' => $product->product_name ?? '',
+                        'qty' => $product->pivot->qty,
+                        'price' => $product->price,
+                        'size' => $product->pivot->size,
+                        'metal' => $product->pivot->metal,
+                    ];
+                });
             }
-        }
-        return response()->json([
+        // Transform the orders to include 'customer_name' as a top-level field
+        $orders = $orders->map(function ($order) use ($orderItems) {
+            return [
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'customer_id' => $order->customer_id,
+                'order_date' => $order->order_date,
+                'total_amount' => $order->total_amount,
+                'invoice_number' => $order->invoice_number,
+                'order_status' => $order->order_status,
+                'created_at' => $order->created_at,
+                'updated_at' => $order->updated_at,
+                'deleted_at' => $order->deleted_at,
+                'deliveryAddress_id' => $order->deliveryAddress_id,
+                'discount' => $order->discount,
+                'customer_name' => $order->customer ? $order->customer->name : null,
+                'customer_email' => $order->customer ? $order->customer->email : null,
+                'customer_phone' => $order->customer ? $order->customer->phone : null,
+                'delivery_address' => $order->deliveryAddress ? $order->deliveryAddress->address : null,
+                'order_items' => $orderItems
+            ];
+        });
+        
+         return response()->json([
             'success' => true,
-            'message' => 'Orders fetched successfully',
-            'orders' => $orders,
-            'order_items' => $orderItems,
+            'message' => 'User Id Get Orders fetched successfully',
+            'orders' => $orders
         ], 200);
     }
 }
