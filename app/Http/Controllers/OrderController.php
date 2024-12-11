@@ -10,7 +10,7 @@ use App\Models\Product;
 use App\Models\Order_Product;
 class OrderController extends Controller
 {
-    public function createOrder(Request $request)
+   public function createOrder(Request $request)
     {
         if ($request->user()->role_id !== 1) {
             return response()->json(['message' => 'Unauthorized'], 403);
@@ -36,7 +36,6 @@ class OrderController extends Controller
         foreach ($request->input('products') as $productData) {
             $stock = Stock::where('product_id', $productData['product_id'])->first();
             $product = Product::find($productData['product_id']);
-
             if ($stock->qty < $productData['qty']) {
                 return response()->json([
                     'success' => false,
@@ -56,8 +55,10 @@ class OrderController extends Controller
                 'product_id' => $productData['product_id'],
                 'product_name' => $product->product_name ?? 'Product name not available',
                 'qty' => $productData['qty'],
-                'size' => $productData['size'],
-                'metal' => $productData['metal'],
+                // 'size' => $productData['size'],
+                // 'metal' => $productData['metal'],
+                'size' => !empty($productData['size']) ? $productData['size'] : '',
+    'metal' => !empty($productData['metal']) ? $productData['metal'] : '',
                 'price' => $product->price,
                 'total_price' => $totalPrice,
                 'discount' => $product->discount,
@@ -78,9 +79,24 @@ class OrderController extends Controller
             'discount' => $request->input('discount'),
         ]);
 
-        foreach ($orderItems as $item) {
-            $order->products()->attach($item['product_id'], ['qty' => $item['qty'], 'size' => $item['size'], 'metal' => $item['metal']]);
-        }
+      foreach ($orderItems as $item) {
+    // Apply conditions for size
+    $size = !empty($item['size']) && in_array($item['size'], ['Small', 'Medium', 'Large']) 
+        ? $item['size'] 
+        : null;
+
+    // Apply conditions for metal
+    $metal = !empty($item['metal']) && in_array($item['metal'], ['Gold', 'Silver', 'Platinum']) 
+        ? $item['metal'] 
+        : '';
+
+    // Attach product with validated size and metal
+    $order->products()->attach($item['product_id'], [
+        'qty' => $item['qty'],
+        'size' => $size,
+        'metal' => $metal,
+    ]);
+}
         return response()->json([
             'success' => true,
             'message' => 'Order created successfully',
