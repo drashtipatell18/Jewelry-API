@@ -13,7 +13,7 @@ class SubFAQController extends Controller
         $validator = Validator::make($request->all(), [
             'faq_id' => 'required|exists:f_a_q_s,id',
             'question' => 'required|string|max:255',
-            'answer' => 'required|string|max:255',
+            'answer' => 'required|string',
         ]);
 
         if($validator->fails()){
