@@ -10,7 +10,7 @@ use App\Models\Product;
 use App\Models\Order_Product;
 class OrderController extends Controller
 {
-   public function createOrder(Request $request)
+    public function createOrder(Request $request)
     {
         if ($request->user()->role_id !== 1) {
             return response()->json(['message' => 'Unauthorized'], 403);
@@ -58,7 +58,7 @@ class OrderController extends Controller
                 // 'size' => $productData['size'],
                 // 'metal' => $productData['metal'],
                 'size' => !empty($productData['size']) ? $productData['size'] : '',
-    'metal' => !empty($productData['metal']) ? $productData['metal'] : '',
+                'metal' => !empty($productData['metal']) ? $productData['metal'] : '',
                 'price' => $product->price,
                 'total_price' => $totalPrice,
                 'discount' => $product->discount,
@@ -224,6 +224,13 @@ class OrderController extends Controller
         $orderItems = [];
         foreach ($orders as $order) {
             $order->products()->each(function ($product) use (&$orderItems) {
+                 $imageUrls = json_decode($product->image, true);
+            if (!is_array($imageUrls)) {
+                $imageUrls = [];
+            }
+            $imageUrls = array_map(function($imageName) {
+                return url('images/products/' . $imageName);
+            }, $imageUrls);
                 $orderItems[] = [
                     'product_id' => $product->id,
                     'product_name' => $product->product_name ?? '',
@@ -231,6 +238,7 @@ class OrderController extends Controller
                     'price' => $product->price,
                     'size' => $product->pivot->size,
                     'metal' => $product->pivot->metal,
+                    'image'=>$imageUrls
                 ];
             });
         }
@@ -384,4 +392,5 @@ class OrderController extends Controller
             'orderProduct' => $orderProduct
         ], 200);
     }
+    
 }
