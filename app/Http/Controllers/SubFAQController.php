@@ -28,7 +28,8 @@ class SubFAQController extends Controller
             'question' => $request->input('question'),
             'answer' => $request->input('answer'),
         ]);
-
+   $faqName = FAQ::find($request->input('faq_id'))->name;
+        $subfaq->faq_name = $faqName;
         return response()->json([
             'success' => true,
             'message' => 'Sub FAQ created successfully',
@@ -72,7 +73,7 @@ class SubFAQController extends Controller
         $validator = Validator::make($request->all(), [
             'faq_id' => 'required|exists:f_a_q_s,id',
             'question' => 'required|string|max:255',
-            'answer' => 'required|string|max:255',
+            'answer' => 'required|string',
         ]);
 
         if($validator->fails()){
@@ -88,6 +89,8 @@ class SubFAQController extends Controller
             'question' => $request->input('question'),
             'answer' => $request->input('answer'),
         ]);
+           $faqName = FAQ::find($request->input('faq_id'))->name;
+        $subfaq->faq_name = $faqName;
         return response()->json([
             'success' => true,
             'message' => 'Sub FAQ updated successfully',
