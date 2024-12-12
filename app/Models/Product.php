@@ -31,6 +31,7 @@ class Product extends Model
         'qty',
         'price',
         'discount',
+    'occasion',
     'sku'
     ];
 
