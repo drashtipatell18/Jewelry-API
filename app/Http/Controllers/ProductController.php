@@ -11,6 +11,12 @@ use App\Models\SubCategory;
 
 class ProductController extends Controller
 {
+     private function generateSKU($productName, $category, $id)
+    {
+        $productInitials = strtoupper(substr($productName, 0, 3)); // First 3 letters
+        $categoryInitials = strtoupper(substr($category, 0, 2)); // First 2 letters
+        return $categoryInitials . '-' . $productInitials . '-' . str_pad($id, 6, '0', STR_PAD_LEFT);
+    }
     public function createProduct(Request $request)
     {
         if ($request->user()->role_id !== 1) {
@@ -20,7 +26,6 @@ class ProductController extends Controller
             ], 403);
         }
         $validator = Validator::make($request->all(), [
-            $validator = Validator::make($request->all(), [
             'product_name' => 'required',
             'category_id' => 'required|exists:categories,id',
             'sub_category_id' => 'required|exists:sub_categories,id',
@@ -41,7 +46,6 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'discount' => 'nullable|numeric|min:0|max:100',
             'image' => 'array',
-        ]);
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 400);
@@ -80,13 +84,22 @@ class ProductController extends Controller
             'status' => $request->input('status'),
             'image' => $imageNames ? json_encode($imageNames) : null, // Store as JSON or null if no images
         ]);
+         
+        
+        $productName = $request->input('product_name'); // Get product name from the request
+        $category = Category::find($product->category_id)->name; // The category name is already fetched
+        $productId = $product->id; // Get the product's ID after creation
+        $sku = $this->generateSKU($productName, $category, $productId); // Generate the SKU
 
+        // Update the product with the generated SKU
+        $product->update(['sku' => $sku]);
+        
         $imageUrls = array_map(function($imageName) {
             return url('images/products/' . $imageName);
         }, $imageNames);
+       
         $catName = $product->category_name = Category::find($product->category_id)->name;
         $subCatName = $product->sub_category_name = SubCategory::find($product->sub_category_id)->name;
-
         return response()->json(
             [
                 'status' => 'success',
@@ -117,6 +130,7 @@ class ProductController extends Controller
                     'price' => $product->price,
                     'discount' => $product->discount,
                     'images' => $imageUrls,
+                    'sku'=>$sku
                 ]
             ], 200);
     }
@@ -162,6 +176,7 @@ class ProductController extends Controller
                 'price' => $product->price,
                 'discount' => $product->discount,
                 'images' => $imageUrls,
+                'sku'=>$product->sku
             ];
         }
 
@@ -192,7 +207,7 @@ class ProductController extends Controller
             return [
                 'id' => $product->id,
                 'status' => $product->status,
-                  'category_id'=> $product->category_id,
+                'category_id'=> $product->category_id,
                 'sub_category_id'=> $product->sub_category_id,
                 'product_name' => $product->product_name,
                 'category_name' => $product->category ? $product->category->name : null,
@@ -215,6 +230,7 @@ class ProductController extends Controller
                 'price' => $product->price,
                 'discount' => $product->discount,
                 'images' => $imageUrls,
+                'sku'=>$product->sku
             ];
         });
 
@@ -268,6 +284,7 @@ class ProductController extends Controller
                     'price' => $product->price,
                     'discount' => $product->discount,
                     'images' => $imageUrls,
+                    'sku'=>$product->sku
             ]
         ], 200);
     }
@@ -332,7 +349,10 @@ class ProductController extends Controller
                 }
             }
         }
-
+         $productName = $request->input('product_name'); // Get product name from the request
+        $category = Category::find($request->input('category_id'))->name; // The category name is already fetched
+        $productId = $product->id; // Get the product's ID after creation
+        $sku = $this->generateSKU($productName, $category, $productId); // Generate the SKU
         $product->update([
             'product_name' => $request->input('product_name'),
             'category_id' => $request->input('category_id'),
@@ -355,6 +375,7 @@ class ProductController extends Controller
             'price' => $request->input('price'),
             'discount' => $request->input('discount'),
             'image' => $imageNames ? json_encode($imageNames) : null,
+            'sku'=>$sku
         ]);
 
         $imageUrls = array_map(function($imageName) {
@@ -392,6 +413,7 @@ class ProductController extends Controller
                 'price' => $product->price,
                 'discount' => $product->discount,
                 'images' => $imageUrls,
+                'sku'=>$product->sku
             ]
         ], 200);
     }
@@ -442,6 +464,7 @@ class ProductController extends Controller
                     'price' => $product->price,
                     'discount' => $product->discount,
                     'images' => $imageUrls,
+                    'sku'=>$product->sku
             ]
         ], 200);
     }
