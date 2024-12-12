@@ -116,7 +116,13 @@ class DashboradController extends Controller
 
 
         // Fetch top sales location
-        $topSalesLocation = Order::with('deliveryAddress')->get()->pluck('deliveryAddress.address')->mode();
+        // $topSalesLocation = Order::with('deliveryAddress')->get()->pluck('deliveryAddress.address')->mode();
+        $topSalesLocation =DB::table('orders')
+    ->join('delivery_address', 'orders.deliveryAddress_id', '=', 'delivery_address.id')
+    ->pluck('delivery_address.address')
+    ->unique()
+    ->values()
+    ->toArray();
 
         // Get product name with max quantity
         $productWithMaxQty = Product::orderBy('qty', 'desc')->first();
