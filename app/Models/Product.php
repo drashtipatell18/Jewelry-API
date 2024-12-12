@@ -31,6 +31,7 @@ class Product extends Model
         'qty',
         'price',
         'discount',
+    'sku'
     ];
 
     public function category()
