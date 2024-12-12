@@ -51,13 +51,14 @@ class OrderController extends Controller
 
             $totalPrice = $product->price * $productData['qty'];
             $totalAmount += $totalPrice; // Add to total amount
-
+// dd($productData);
             $orderItems[] = [
                 'product_id' => $productData['product_id'],
                 'product_name' => $product->product_name ?? 'Product name not available',
                 'qty' => $productData['qty'],
-                'size' => $productData['size'],
-                'metal' => $productData['metal'],
+                'size' => $productData['size'] ?? '',
+                'metal' => $product->metal ?? '',
+                'metal_color' => $product->metal_color ?? '',
                 'price' => $product->price,
                 'total_price' => $totalPrice,
                 'discount' => $product->discount,
@@ -79,7 +80,7 @@ class OrderController extends Controller
         ]);
 
         foreach ($orderItems as $item) {
-            $order->products()->attach($item['product_id'], ['qty' => $item['qty'], 'size' => $item['size'], 'metal' => $item['metal']]);
+            $order->products()->attach($item['product_id'], ['qty' => $item['qty'], 'size' => $item['size'], 'metal' => $item['metal'],'metal_color'=>$item['metal_color']]);
         }
         return response()->json([
             'success' => true,
@@ -159,8 +160,9 @@ class OrderController extends Controller
                 'product_id' => $productData['product_id'],
                 'product_name' => $product->product_name ?? 'Product name not available',
                 'qty' => $productData['qty'],
-                'size' => $productData['size'],
-                'metal' => $productData['metal'],
+                'size' => $productData['size'], 
+                'metal' => $product->metal ?? '',
+                'metal_color' => $product->metal_color ?? '',
                 'price' => $product->price,
                 'total_price' => $totalPrice
             ];
@@ -179,7 +181,7 @@ class OrderController extends Controller
         // Sync products with new quantities
         $productsToSync = [];
         foreach ($request->input('products') as $productData) {
-            $productsToSync[$productData['product_id']] = ['qty' => $productData['qty'], 'size' => $productData['size'], 'metal' => $productData['metal']];
+            $productsToSync[$productData['product_id']] = ['qty' => $productData['qty'], 'size' => $productData['size'], 'metal' => $productData['metal'],'metal_color'=>$productData['metal_color']];
         }
         $order->products()->sync($productsToSync);
 
@@ -215,6 +217,9 @@ class OrderController extends Controller
                     'price' => $product->price,
                     'size' => $product->pivot->size,
                     'metal' => $product->pivot->metal,
+                     'metal_color' => $product->metal_color,
+                     'sku'=>$product->sku,
+                        'diamond_quality'=>$product->diamond_quality
                 ];
             });
         }
@@ -262,6 +267,9 @@ class OrderController extends Controller
                     'price' => $product->price,
                     'size' => $product->pivot->size,
                     'metal' => $product->pivot->metal,
+                     'metal_color' => $product->metal_color,
+                     'sku'=>$product->sku,
+                        'diamond_quality'=>$product->diamond_quality
                 ];
             });
             // dd($orderItems);
@@ -370,7 +378,7 @@ class OrderController extends Controller
         ], 200);
     }
 
-     public function getOrdersByUserId(Request $request)
+    public function getOrdersByUserId(Request $request)
     {
         $userId = $request->input('customer_id');
         // Fetch orders for the specified user ID
@@ -386,6 +394,7 @@ class OrderController extends Controller
             $imageUrls = array_map(function($imageName) {
                 return url('images/products/' . $imageName);
             }, $imageUrls);
+            // dd($product->pivot->metal_color);
                     $orderItems[] = [
                         'product_id' => $product->id,
                         'product_name' => $product->product_name ?? '',
@@ -393,7 +402,10 @@ class OrderController extends Controller
                         'price' => $product->price,
                         'size' => $product->pivot->size,
                         'metal' => $product->pivot->metal,
-                        'image'=>$imageUrls
+                        'metal_color' => $product->metal_color,
+                        'image'=>$imageUrls,
+                        'sku'=>$product->sku,
+                        'diamond_quality'=>$product->diamond_quality
                     ];
                 });
             }
