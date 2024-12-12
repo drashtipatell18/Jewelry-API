@@ -249,10 +249,15 @@ class ProductController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Product not found'], 404);
         }
 
-        $imageUrls = json_decode($product->image, true);
-        $imageUrls = array_map(function($imageName) {
-            return url('images/products/' . $imageName);
-        }, $imageUrls);
+         $imageUrls = [];
+    if ($product->image) {
+        $imageDecoded = json_decode($product->image, true);
+        if ($imageDecoded) {
+            $imageUrls = array_map(function($imageName) {
+                return url('images/products/' . $imageName);
+            }, $imageDecoded);
+        }
+    }
          $catName = $product->category_name = Category::find($product->category_id)->name;
         $subCatName = $product->sub_category_name = SubCategory::find($product->sub_category_id)->name;
         return response()->json([
