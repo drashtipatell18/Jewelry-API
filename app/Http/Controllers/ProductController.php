@@ -46,6 +46,7 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'discount' => 'nullable|numeric|min:0|max:100',
             'image' => 'array',
+            
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 400);
@@ -82,6 +83,7 @@ class ProductController extends Controller
             'price' => $request->input('price'),
             'discount' => $request->input('discount'),
             'status' => $request->input('status'),
+            'occasion'=>$request->occasion,
             'image' => $imageNames ? json_encode($imageNames) : null, // Store as JSON or null if no images
         ]);
          
@@ -129,6 +131,7 @@ class ProductController extends Controller
                     'qty' => $product->qty,
                     'price' => $product->price,
                     'discount' => $product->discount,
+                    'occasion'=>$product->occasion,
                     'images' => $imageUrls,
                     'sku'=>$sku
                 ]
@@ -176,6 +179,7 @@ class ProductController extends Controller
                 'price' => $product->price,
                 'discount' => $product->discount,
                 'images' => $imageUrls,
+                 'occasion'=>$product->occasion,
                 'sku'=>$product->sku
             ];
         }
@@ -230,7 +234,8 @@ class ProductController extends Controller
                 'price' => $product->price,
                 'discount' => $product->discount,
                 'images' => $imageUrls,
-                'sku'=>$product->sku
+                'sku'=>$product->sku,
+                 'occasion'=>$product->occasion,
             ];
         });
 
@@ -249,7 +254,7 @@ class ProductController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Product not found'], 404);
         }
 
-         $imageUrls = [];
+       $imageUrls = [];
     if ($product->image) {
         $imageDecoded = json_decode($product->image, true);
         if ($imageDecoded) {
@@ -289,6 +294,7 @@ class ProductController extends Controller
                     'price' => $product->price,
                     'discount' => $product->discount,
                     'images' => $imageUrls,
+                     'occasion'=>$product->occasion,
                     'sku'=>$product->sku
             ]
         ], 200);
@@ -380,7 +386,8 @@ class ProductController extends Controller
             'price' => $request->input('price'),
             'discount' => $request->input('discount'),
             'image' => $imageNames ? json_encode($imageNames) : null,
-            'sku'=>$sku
+            'sku'=>$sku,
+             'occasion'=>$request->occasion,
         ]);
 
         $imageUrls = array_map(function($imageName) {
@@ -418,6 +425,7 @@ class ProductController extends Controller
                 'price' => $product->price,
                 'discount' => $product->discount,
                 'images' => $imageUrls,
+                 'occasion'=>$product->occasion,
                 'sku'=>$product->sku
             ]
         ], 200);
@@ -469,7 +477,8 @@ class ProductController extends Controller
                     'price' => $product->price,
                     'discount' => $product->discount,
                     'images' => $imageUrls,
-                    'sku'=>$product->sku
+                    'sku'=>$product->sku,
+                     'occasion'=>$product->occasion,
             ]
         ], 200);
     }
