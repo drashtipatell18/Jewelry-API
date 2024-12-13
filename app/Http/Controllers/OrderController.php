@@ -51,7 +51,7 @@ class OrderController extends Controller
 
             $totalPrice = $product->price * $productData['qty'];
             $totalAmount += $totalPrice; // Add to total amount
-// dd($productData);
+
             $orderItems[] = [
                 'product_id' => $productData['product_id'],
                 'product_name' => $product->product_name ?? 'Product name not available',
@@ -95,7 +95,8 @@ class OrderController extends Controller
                 'invoice_number' => $order->invoice_number,
                 'deliveryAddress_id' => $order->deliveryAddress_id,
                 'discount' => $order->discount,
-                'order_items' => $orderItems
+                'order_items' => $orderItems,
+                'reason'=>$order->reason
             ],
         ], 200);
     }
@@ -242,7 +243,8 @@ class OrderController extends Controller
                 'customer_email' => $order->customer ? $order->customer->email : null,
                 'customer_phone' => $order->customer ? $order->customer->phone : null,
                 'delivery_address' => $order->deliveryAddress ? $order->deliveryAddress->address : null,
-                'order_items' => $orderItems
+                'order_items' => $orderItems,
+                'reason'=>$order->reason
             ];
         });
 
@@ -289,6 +291,7 @@ class OrderController extends Controller
                 'deliveryAddress' => $order->deliveryAddress,
                 'order_items' => $orderItems,
                 'discount' => $order->discount,
+                'reason'=>$order->reason
             ],
         ], 200);
     }
@@ -329,7 +332,8 @@ class OrderController extends Controller
         }
         $order = Order::find($id);
         $order->update([
-            'order_status' => $request->input('order_status')
+            'order_status' => $request->input('order_status'),
+            'reason'=>$request->input('reason')
         ]);
         return response()->json([
             'success' => true,
@@ -428,7 +432,8 @@ class OrderController extends Controller
                 'customer_email' => $order->customer ? $order->customer->email : null,
                 'customer_phone' => $order->customer ? $order->customer->phone : null,
                 'delivery_address' => $order->deliveryAddress ? $order->deliveryAddress->address : null,
-                'order_items' => $orderItems
+                'order_items' => $orderItems,
+                'reason'=>$order->reason
             ];
         });
         
